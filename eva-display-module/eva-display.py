@@ -82,6 +82,58 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
                 
+                if self.targetstate == "inlove":
+                    if self.stopped:
+                        self.frame = 27 # frame inicial da animacao
+                        self.stopped = False
+                    else:
+                        if self.frame > 28:
+                            self.frame = 28
+                            self.currentstate = "inlove"
+                            self.stopped = True
+                        else: 
+                            self.config(image=self.frames[self.frame])
+                            self.frame += 1
+
+                if self.targetstate == "disgust":
+                    if self.stopped:
+                        self.frame = 23 # frame inicial da animacao
+                        self.stopped = False
+                    else:
+                        if self.frame > 24:
+                            self.frame = 24
+                            self.currentstate = "disgust"
+                            self.stopped = True
+                        else: 
+                            self.config(image=self.frames[self.frame])
+                            self.frame += 1
+
+                if self.targetstate == "surprise":
+                    if self.stopped:
+                        self.frame = 19 # frame inicial da animacao
+                        self.stopped = False
+                    else:
+                        if self.frame > 20:
+                            self.frame = 20
+                            self.currentstate = "surprise"
+                            self.stopped = True
+                        else: 
+                            self.config(image=self.frames[self.frame])
+                            self.frame += 1
+
+                if self.targetstate == "fear":
+                    if self.stopped:
+                        self.frame = 15 # frame inicial da animacao
+                        self.stopped = False
+                    else:
+                        if self.frame > 16:
+                            self.frame = 16
+                            self.currentstate = "fear"
+                            self.stopped = True
+                        else: 
+                            self.config(image=self.frames[self.frame])
+                            self.frame += 1
+
                 if self.targetstate == "happy":
                     if self.stopped:
                         self.frame = 11 # frame inicial da animacao
@@ -121,36 +173,38 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "fear":
-                    if self.stopped:
-                        self.frame = 15 # frame inicial da animacao
-                        self.stopped = False
-                    else:
-                        if self.frame > 16:
-                            self.frame = 16
-                            self.currentstate = "fear"
-                            self.stopped = True
-                        else: 
-                            self.config(image=self.frames[self.frame])
-                            self.frame += 1
-
-                if self.targetstate == "surprise":
-                    if self.stopped:
-                        self.frame = 19 # frame inicial da animacao
-                        self.stopped = False
-                    else:
-                        if self.frame > 20:
-                            self.frame = 20
-                            self.currentstate = "surprise"
-                            self.stopped = True
-                        else: 
-                            self.config(image=self.frames[self.frame])
-                            self.frame += 1
+                
 
             # faz a transição de todos os estados para o "neutral"
             elif self.targetstate == "blink": # não deve funcionar quando não está em "neutral"
                 pass
             
+            elif self.currentstate == "inlove":
+                if self.stopped:
+                        self.frame = 29 # frame inicial da animacao
+                        self.stopped = False
+                else:
+                    if self.frame > 30:
+                        self.frame = 30
+                        self.currentstate = "neutral"
+                        self.stopped = True
+                    else: 
+                        self.config(image=self.frames[self.frame])
+                        self.frame += 1
+
+            elif self.currentstate == "disgust":
+                if self.stopped:
+                        self.frame = 25 # frame inicial da animacao
+                        self.stopped = False
+                else:
+                    if self.frame > 26:
+                        self.frame = 26
+                        self.currentstate = "neutral"
+                        self.stopped = True
+                    else: 
+                        self.config(image=self.frames[self.frame])
+                        self.frame += 1
+
             elif self.currentstate == "surprise":
                 if self.stopped:
                         self.frame = 21 # frame inicial da animacao
@@ -234,7 +288,11 @@ class ImageLabel(tk.Label):
             self.targetstate = "fear"
         elif key == 'r':
             self.targetstate = "surprise"
-        if key == 'p':
+        elif key == 'd':
+            self.targetstate = "disgust"
+        elif key == 'i':
+            self.targetstate = "inlove"
+        elif key == 'p':
             self.targetstate = "blink"
 
 
@@ -243,7 +301,7 @@ root = tk.Tk()
 root.attributes("-fullscreen", True)
 lbl = ImageLabel(root)
 lbl.grid(column=0, row=0, padx= 150, pady=150)
-lbl.load("eva-display-module/eva-exp-23.gif")
+lbl.load("eva-display-module/eva-expressions.gif")
 root.bind('<Key>', lbl.key_press)
 
 # MQTT
@@ -271,8 +329,13 @@ def on_message(client, userdata, msg):
             lbl.targetstate = "fear"
         elif msg.payload.decode() == "SURPRISE":
             lbl.targetstate = "surprise"
+        elif msg.payload.decode() == "DISGUST":
+            lbl.targetstate = "disgust"
+        elif msg.payload.decode() == "INLOVE":
+            lbl.targetstate = "inlove"
         elif msg.payload.decode() == "BLINK":
             lbl.targetstate = "blink"
+
             
 
 client = mqtt_client.Client()

@@ -10,8 +10,8 @@ EVA_TOPIC_BASE       = 'EVA'
 
 
 # Serial port settings
-EVA_SERIAL_PORT = '/dev/ttyUSB0'
-BAUD_RATE = '9600'
+EVA_SERIAL_PORT = '/dev/ttyACM0'
+BAUD_RATE = '1000000'
 
 # Audio (playing)
 AUDIO_EXTENSION = ".wav"

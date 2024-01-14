@@ -18,7 +18,7 @@ BAUD_RATE = config.BAUD_RATE
 
 EVA_head_serial = serial.Serial(EVA_SERIAL_PORT, BAUD_RATE)
 
-time.sleep(7) # waiting for serial board intializing process
+#time.sleep(7) # waiting for serial board intializing process. use this if using ARBOTIX-M board
 
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
@@ -55,8 +55,12 @@ def on_message(client, userdata, msg):
             EVA_head_serial.write("D".encode())
         elif msg.payload.decode() == "NO":
             EVA_head_serial.write("s".encode())
+        elif msg.payload.decode() == "2NO":
+            EVA_head_serial.write("S".encode())
         elif msg.payload.decode() == "YES":
             EVA_head_serial.write("n".encode())
+        elif msg.payload.decode() == "2YES":
+            EVA_head_serial.write("N".encode())
         elif msg.payload.decode() == "UP_LEFT":
             EVA_head_serial.write("q".encode())
         elif msg.payload.decode() == "2UP_LEFT":
