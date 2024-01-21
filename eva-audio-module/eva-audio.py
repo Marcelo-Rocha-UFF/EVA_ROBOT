@@ -1,4 +1,4 @@
-from playsound import playsound as ps
+import pygame
 from paho.mqtt import client as mqtt_client
 
 
@@ -10,17 +10,27 @@ broker = config.MQTT_BROKER_ADRESS # broker adress
 port = config.MQTT_PORT # broker port
 topic_base = config.EVA_TOPIC_BASE
 
+pygame.init()
 
 # 
 def playsound(audio_file, block = True):
         file_path = "eva-audio-module/audio_files/"
-        ps(file_path + audio_file + config.AUDIO_EXTENSION , block)
+        client.publish(topic_base + "/log", "EVA is playing a sound.")
+        sound = pygame.mixer.Sound(file_path + audio_file + config.AUDIO_EXTENSION)
+        playing = sound.play()
+        if block == True:
+            while playing.get_busy():
+                pass
+                #pygame.time.delay(10)
+        else:
+            pass
+        
 
 # speaking is always bloking. The function is responsable to FREE the robot state
 def speech(audio_file, block = True):
         file_path = "eva-tts-module/tts_cache_files/"
-        ps(file_path + audio_file, block)
         client.publish(topic_base + "/log", "EVA spoke the text and is FREE now.")
+        playsound(file_path + audio_file, block)
         client.publish(topic_base + "/state", "FREE")
 
 
@@ -40,9 +50,11 @@ def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/audio':
         file_name = msg.payload.decode().split("|")[0]
         block = msg.payload.decode().split("|")[1]
-        playsound(file_name, block)
         if block == "TRUE":
+            playsound(file_name, True)
             client.publish(topic_base + "/state", "FREE") # libera o robô
+        else:
+            playsound(file_name, False) 
 
     if msg.topic == topic_base + '/speech':
         file_name = msg.payload.decode()
