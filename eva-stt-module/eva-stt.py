@@ -22,8 +22,8 @@ r = sr.Recognizer()
 #     print(f'{index}, {name}')
 
 
-# # Matrix Voice is 3 or 4
-mic = sr.Microphone()
+# # Matrix Voice is 0 or 1
+mic = sr.Microphone(1)
 r.energy_threshold = 300
 
 # MQTT
