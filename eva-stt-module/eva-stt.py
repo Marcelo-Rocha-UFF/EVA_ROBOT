@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 from paho.mqtt import client as mqtt_client
+import time
 
 import speech_recognition as sr
 
@@ -18,13 +19,14 @@ topic_base = config.EVA_TOPIC_BASE
 r = sr.Recognizer()
 
 
-# for index, name in enumerate(sr.Microphone.list_microphone_names()):
-#     print(f'{index}, {name}')
+for index, name in enumerate(sr.Microphone.list_microphone_names()):
+    print(f'{index}, {name}')
 
 
-# # Matrix Voice is 0 or 1
-mic = sr.Microphone(1)
-r.energy_threshold = 300
+# # Matrix Voice is default
+mic = sr.Microphone()
+r.energy_threshold = 1000 # sensibilidade da captação
+
 
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
@@ -44,6 +46,7 @@ def on_message(client, userdata, msg):
             #r.adjust_for_ambient_noise(source)  # listen for 1 second to calibrate the energy threshold for ambient noise levels
             print("EVA is listening!")
             audio = r.listen(source)
+            print("The audio was recorded!")
 
             # recognize speech using Google Speech Recognition
             try:
@@ -58,7 +61,6 @@ def on_message(client, userdata, msg):
             except sr.RequestError as e:
                 print("Could not request results from Google Speech Recognition service; {0}".format(e))
             
-        
         client.publish(topic_base + "/state", "FREE")
 
 
@@ -84,3 +86,7 @@ client.connect(broker, port)
 
 
 client.loop_forever()
+
+# import speech_recognition as sr
+# for index, name in enumerate(sr.Microphone.list_microphone_names()):
+#     print("Microphone with name \"{1}\" found for `Microphone(device_index={0})`".format(index, name))

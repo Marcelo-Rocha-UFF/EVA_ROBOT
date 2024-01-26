@@ -1,4 +1,4 @@
-from playsound import playsound as ps
+# from playsound import playsound as ps
 import hashlib
 import os
 from paho.mqtt import client as mqtt_client
@@ -32,9 +32,9 @@ authenticator = IAMAuthenticator(apikey)
 tts = TextToSpeechV1(authenticator = authenticator)
 tts.set_service_url(url)
 
-def playsound(audio_file, block = True):
-    file_path = "eva-tts-module/tts_cache_files/"
-    ps(file_path + audio_file, block)
+# def playsound(audio_file, block = True):
+#     file_path = "eva-tts-module/tts_cache_files/"
+#     ps(file_path + audio_file, block)
 
 
 # MQTT
@@ -83,7 +83,7 @@ def on_message(client, userdata, msg):
                                 client.publish(topic_base + "/log", "The audio was generated correctly in (s): " + str(tts_ending - tts_start))
                                 print("O arquivo foi gerado corretamente.")
                                 client.publish(topic_base + "/log", "EVA is BUSY trying to speak the text.")
-                                client.publish(topic_base + "/speech", file_name + config.WATSON_AUDIO_EXTENSION)
+                                client.publish(topic_base + "/speech", file_name)
                                 audio_file_is_ok = True  
                         except:
                             print("Voice exception")
@@ -97,7 +97,7 @@ def on_message(client, userdata, msg):
                     print("O arquivo tem mais que 0 bytes...")
                     client.publish(topic_base + "/log", "The audio was found in cache.")
                     client.publish(topic_base + "/log", "EVA is BUSY trying to speak the text.")
-                    client.publish(topic_base + "/speech", file_name + config.WATSON_AUDIO_EXTENSION)
+                    client.publish(topic_base + "/speech", file_name)
                     audio_file_is_ok = True  
         
         

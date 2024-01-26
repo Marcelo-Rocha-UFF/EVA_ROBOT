@@ -17,8 +17,8 @@ subprocess.Popen(["python3", "eva-audio-module/eva-audio.py"])
 print("5- Running Motion module")
 subprocess.Popen(["python3", "eva-motion-module/eva-motion.py"])
 
-# print("6- Running Speech-To-Text (STT) module")
-# subprocess.Popen(["python3", "eva-stt-module/eva-stt.py"])
+print("6- Running Speech-To-Text (STT) module")
+subprocess.Popen(["python3", "eva-stt-module/eva-stt.py"])
 
 print("7- Running Display module")
 subprocess.Popen(["python3", "eva-display-module/eva-display.py"])
