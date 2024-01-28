@@ -25,8 +25,11 @@ for index, name in enumerate(sr.Microphone.list_microphone_names()):
 
 # # Matrix Voice is default
 mic = sr.Microphone()
-r.energy_threshold = 1000 # sensibilidade da captação
+threshold = 980
+# timeout = 10
 
+# r.dynamic_energy_threshold = False
+r.energy_threshold = threshold # sensibilidade da captação
 
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
@@ -45,7 +48,7 @@ def on_message(client, userdata, msg):
         with mic as source:
             #r.adjust_for_ambient_noise(source)  # listen for 1 second to calibrate the energy threshold for ambient noise levels
             print("EVA is listening!")
-            audio = r.listen(source)
+            audio = r.listen(source) # timeout = 4
             print("The audio was recorded!")
 
             # recognize speech using Google Speech Recognition

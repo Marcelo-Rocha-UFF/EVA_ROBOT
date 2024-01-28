@@ -19,3 +19,7 @@ AUDIO_EXTENSION = ".wav"
 # Watson audio format (extension)
 WATSON_AUDIO_EXTENSION = ".mp3"
 ACCEPT_AUDIO_EXTENSION = "audio/mp3"
+
+# Watson Voice tone
+VOICE_TONE = "pt-BR_IsabelaV3Voice" 
+#voice_tone = "en-US_HenryV3Voice"

@@ -294,6 +294,8 @@ class ImageLabel(tk.Label):
             self.targetstate = "inlove"
         elif key == 'p':
             self.targetstate = "blink"
+        elif key == 'q':
+            exit(0)
 
 
 #Tk Window

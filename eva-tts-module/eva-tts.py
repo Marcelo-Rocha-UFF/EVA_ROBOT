@@ -18,8 +18,8 @@ broker = config.MQTT_BROKER_ADRESS # broker adress
 port = config.MQTT_PORT # broker port
 topic_base = config.EVA_TOPIC_BASE
 
-voice_tone = "pt-BR_IsabelaV3Voice" 
-#voice_tone = "en-US_HenryV3Voice"
+voice_tone = config.VOICE_TONE
+
 
 # watson config api key
 with open("eva-tts-module/ibm_cred.txt", "r") as ibm_cred: 
@@ -61,17 +61,20 @@ def on_message(client, userdata, msg):
         print("Voice:", voice_tone, "Message:", msg.payload.decode())
         hash_object = hashlib.md5(msg.payload)
         file_name = "_audio_"  + voice_tone + hash_object.hexdigest()
+        
         audio_file_is_ok = False
         while(not audio_file_is_ok):
             # verifica se o audio da fala já existe na pasta cache
             if not (os.path.isfile("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)): # se nao existe chama o watson
-                print("O arquivo não está em cache...")
+                print("O arquivo não está em cache... Vamos tentar gerá-lo!")
                 tts_start = time.time()
                 while(not audio_file_is_ok):
                     # Eva tts functions
                     with open("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION, 'wb') as audio_file:
                         try:
+                            print("Gerando o res...")
                             res = tts.synthesize(msg.payload.decode(), accept = config.ACCEPT_AUDIO_EXTENSION, voice = voice_tone).get_result()
+                            print("gravando conteudo no disco...")
                             audio_file.write(res.content)
                             file_size = os.path.getsize("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)
                             print("File size:", file_size, " bytes.")
@@ -81,7 +84,7 @@ def on_message(client, userdata, msg):
                             else:
                                 tts_ending = time.time()
                                 client.publish(topic_base + "/log", "The audio was generated correctly in (s): " + str(tts_ending - tts_start))
-                                print("O arquivo foi gerado corretamente.")
+                                print("O arquivo foi gerado corretamente e será tocado!")
                                 client.publish(topic_base + "/log", "EVA is BUSY trying to speak the text.")
                                 client.publish(topic_base + "/speech", file_name)
                                 audio_file_is_ok = True  
@@ -91,10 +94,10 @@ def on_message(client, userdata, msg):
             else:
                 print("O arquivo está em cache!")
                 if (os.path.getsize("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)) == 0: # arquivo corrompido
-                    print("O arquivo de audio está corrompido e será removido!")
+                    print("O arquivo de audio gerado tem 0 bytes, está corrompido e será removido!")
                     os.remove("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)
                 else:
-                    print("O arquivo tem mais que 0 bytes...")
+                    print("O arquivo tem mais que 0 bytes e será tocado agora!")
                     client.publish(topic_base + "/log", "The audio was found in cache.")
                     client.publish(topic_base + "/log", "EVA is BUSY trying to speak the text.")
                     client.publish(topic_base + "/speech", file_name)
