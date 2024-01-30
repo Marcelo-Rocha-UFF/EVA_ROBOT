@@ -1,6 +1,6 @@
-import pygame
 from paho.mqtt import client as mqtt_client
-
+import subprocess
+import time
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
@@ -10,10 +10,10 @@ broker = config.MQTT_BROKER_ADRESS # broker adress
 port = config.MQTT_PORT # broker port
 topic_base = config.EVA_TOPIC_BASE
 
-pygame.init()
 
 # 
 def playsound(file_path, audio_file, type, block = True):
+        print(type)
         if type == "audio":
             audio_format = config.AUDIO_EXTENSION
             client.publish(topic_base + "/log", "EVA is playing a sound.")
@@ -21,14 +21,16 @@ def playsound(file_path, audio_file, type, block = True):
             audio_format = config.WATSON_AUDIO_EXTENSION
             client.publish(topic_base + "/log", "EVA spoke the text and is FREE now.")
         
-        sound = pygame.mixer.Sound(file_path + audio_file + audio_format)
-        playing = sound.play()
+        # sound = pygame.mixer.Sound(file_path + audio_file + audio_format)
+        # playing = sound.play()
         if block == True:
-            while playing.get_busy():
-                pass
-                #pygame.time.delay(10)
+            print("Blocking audio.")
+            play = subprocess.Popen(['play', file_path + audio_file + audio_format], stdout=subprocess.PIPE)
+            play.communicate()[0]
         else:
-            pass
+            print("No-blocking audio.")
+            play = subprocess.Popen(['play', file_path + audio_file + audio_format], stdout=subprocess.PIPE)
+
         
 
 # speaking is always bloking. The function is responsable to FREE the robot state
@@ -55,10 +57,10 @@ def on_message(client, userdata, msg):
         file_name = msg.payload.decode().split("|")[0]
         block = msg.payload.decode().split("|")[1]
         if block == "TRUE":
-            playsound("eva-tts-module/tts_cache_files/", file_name, config.AUDIO_EXTENSION, True)
+            playsound("eva-audio-module/audio_files/", file_name, "audio", True)
             client.publish(topic_base + "/state", "FREE") # libera o robô
         else:
-            playsound("eva-tts-module/tts_cache_files/", file_name, config.AUDIO_EXTENSION, False) 
+            playsound("eva-audio-module/audio_files/", file_name, "audio", False) 
 
     if msg.topic == topic_base + '/speech':
         file_name = msg.payload.decode()

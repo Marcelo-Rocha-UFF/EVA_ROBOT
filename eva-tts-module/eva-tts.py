@@ -8,6 +8,7 @@ import time
 # from ibm_watson.text_to_speech_v1 import Voice
 from ibm_watson import TextToSpeechV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson import ApiException
 
 
 import sys
@@ -88,8 +89,8 @@ def on_message(client, userdata, msg):
                                 client.publish(topic_base + "/log", "EVA is BUSY trying to speak the text.")
                                 client.publish(topic_base + "/speech", file_name)
                                 audio_file_is_ok = True  
-                        except:
-                            print("Voice exception")
+                        except ApiException as ex:
+                            print ("Method failed with status code " + str(ex.code) + ": " + ex.message)
                             exit(1)
             else:
                 print("O arquivo está em cache!")
