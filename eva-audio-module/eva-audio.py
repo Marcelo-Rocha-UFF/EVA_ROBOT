@@ -16,7 +16,6 @@ def playsound(file_path, audio_file, type, block = True):
         print(type)
         if type == "audio":
             audio_format = config.AUDIO_EXTENSION
-            client.publish(topic_base + "/log", "EVA is playing a sound.")
         elif type == "speech":
             audio_format = config.WATSON_AUDIO_EXTENSION
             client.publish(topic_base + "/log", "EVA spoke the text and is FREE now.")
