@@ -33,9 +33,7 @@ authenticator = IAMAuthenticator(apikey)
 tts = TextToSpeechV1(authenticator = authenticator)
 tts.set_service_url(url)
 
-# def playsound(audio_file, block = True):
-#     file_path = "eva-tts-module/tts_cache_files/"
-#     ps(file_path + audio_file, block)
+auth_start_time = time.time() # momento da autenticação
 
 
 # MQTT
@@ -49,7 +47,7 @@ def on_connect(client, userdata, flags, rc):
     
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    global voice_tone
+    global voice_tone, auth_start_time
     if msg.topic == topic_base + '/talk':
         print("Usando o IBM Watson para converter o texto em audio...")
         # Assume the default UTF-8 (Gera o hashing do arquivo de audio)
@@ -68,6 +66,24 @@ def on_message(client, userdata, msg):
             # verifica se o audio da fala já existe na pasta cache
             if not (os.path.isfile("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)): # se nao existe chama o watson
                 print("O arquivo não está em cache... Vamos tentar gerá-lo!")
+
+                # # Verifica se o múdlo esteve inativo por mais 2 min
+                # if time.time() - auth_start_time >= 120:
+                #     global apikey, url, authenticator, tts
+                #     print("O módulo esteve inativo por mais de 2 min e uma nova autenticação será feita.")
+                #     # watson config api key
+                #     with open("eva-tts-module/ibm_cred.txt", "r") as ibm_cred: 
+                #         ibm_config = ibm_cred.read().splitlines()
+                #     apikey = ibm_config[0]
+                #     url = ibm_config[1]
+                #     # setup watson service
+                #     authenticator = IAMAuthenticator(apikey)
+                #     # tts service
+                #     tts = TextToSpeechV1(authenticator = authenticator)
+                #     tts.set_service_url(url)
+                #     auth_start_time = time.time() # momento da autenticação
+
+                # Incia o processo de TTS
                 tts_start = time.time()
                 while(not audio_file_is_ok):
                     # Eva tts functions
