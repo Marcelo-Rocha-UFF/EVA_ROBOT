@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from paho.mqtt import client as mqtt_client
+import subprocess
+
 
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -17,7 +19,6 @@ import config # Modulo com as configurações dos dispositivos de rede
 broker = config.MQTT_BROKER_ADRESS # broker adress
 port = config.MQTT_PORT # broker port
 topic_base = config.EVA_TOPIC_BASE
-
 
 
 class ImageLabel(tk.Label):
@@ -306,6 +307,19 @@ lbl.grid(column=0, row=0, padx= 150, pady=150)
 lbl.load("eva-display-module/eva-expressions.gif")
 root.bind('<Key>', lbl.key_press)
 
+
+# Abertura do EVA
+from vlc import *
+media_player = MediaPlayer()
+media = Media("eva-abertura-logo.mp4")
+media_player.set_media(media)
+media_player.toggle_fullscreen()
+media_player.play()
+time.sleep(0.1) # tempo para o inicio do play pelo vlc
+while media_player.is_playing():
+            time.sleep(.1)
+
+
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -347,4 +361,8 @@ client.connect(broker, port)
 
 
 client.loop_start()
+
+
+
+
 root.mainloop()

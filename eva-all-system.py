@@ -1,6 +1,6 @@
 import subprocess
 import os
-import threading
+
 
 print("1- Running Text-To-Speech (TTS) module")
 subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
