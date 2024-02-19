@@ -12,6 +12,7 @@ import random
 import time
 
 import sys
+
 sys.path.append('/home/pi/EVA_ROBOT')
 
 import config # Modulo com as configurações dos dispositivos de rede
@@ -318,6 +319,10 @@ media_player.play()
 time.sleep(0.1) # tempo para o inicio do play pelo vlc
 while media_player.is_playing():
             time.sleep(.1)
+
+# #name= askopenfilename(filetypes=[("eva-abertura-logo.mp4","*.h264")])
+# shell_value = False  # or True
+# subprocess.call(['vlc', "eva-abertura-logo.mp4", '--play-and-exit'])
 
 
 # MQTT

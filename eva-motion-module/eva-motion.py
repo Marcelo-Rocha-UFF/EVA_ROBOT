@@ -35,6 +35,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/motion/head':
         client.publish(topic_base + '/log', 'Moving the head: ' + msg.payload.decode())
+        # mantendo a compatibilidade com a versão antiga.
         if msg.payload.decode() == "CENTER":
             EVA_arduino_serial_obj.write("c".encode())
         elif msg.payload.decode() == "RIGHT":
@@ -77,7 +78,60 @@ def on_message(client, userdata, msg):
             EVA_arduino_serial_obj.write("z".encode())
         elif msg.payload.decode() == "2DOWN_LEFT":
             EVA_arduino_serial_obj.write("Z".encode())
+        # usando a nova versão de controle dos movimentos da cabeça.
+        elif msg.payload.decode() == "UP1":
+            EVA_arduino_serial_obj.write("hu1".encode())
+        elif msg.payload.decode() == "UP2":
+            EVA_arduino_serial_obj.write("hu2".encode())
+        elif msg.payload.decode() == "DOWN1":
+            EVA_arduino_serial_obj.write("hd1".encode())
+        elif msg.payload.decode() == "DOWN2":
+            EVA_arduino_serial_obj.write("hd2".encode())
 
+        elif msg.payload.decode() == "LEFT1":
+            EVA_arduino_serial_obj.write("hl1".encode())
+        elif msg.payload.decode() == "LEFT2":
+            EVA_arduino_serial_obj.write("hl2".encode())
+        elif msg.payload.decode() == "LEFT3":
+            EVA_arduino_serial_obj.write("hl3".encode())
+        elif msg.payload.decode() == "RIGHT1":
+            EVA_arduino_serial_obj.write("hr1".encode())
+        elif msg.payload.decode() == "RIGHT2":
+            EVA_arduino_serial_obj.write("hr2".encode())
+        elif msg.payload.decode() == "RIGHT3":
+            EVA_arduino_serial_obj.write("hr3".encode())
+
+        elif msg.payload.decode() == "LEFT_UP1":
+            EVA_arduino_serial_obj.write("h11".encode())
+        elif msg.payload.decode() == "LEFT_UP2":
+            EVA_arduino_serial_obj.write("h12".encode())
+        elif msg.payload.decode() == "LEFT_UP3":
+            EVA_arduino_serial_obj.write("h13".encode())
+        elif msg.payload.decode() == "RIGHT_UP1":
+            EVA_arduino_serial_obj.write("h21".encode())
+        elif msg.payload.decode() == "RIGHT_UP2":
+            EVA_arduino_serial_obj.write("h22".encode())
+        elif msg.payload.decode() == "RIGHT_UP3":
+            EVA_arduino_serial_obj.write("h23".encode())
+        elif msg.payload.decode() == "LEFT_DOWN1":
+            EVA_arduino_serial_obj.write("h41".encode())
+        elif msg.payload.decode() == "LEFT_DOWN2":
+            EVA_arduino_serial_obj.write("h42".encode())
+        elif msg.payload.decode() == "LEFT_DOWN3":
+            EVA_arduino_serial_obj.write("h43".encode())
+        elif msg.payload.decode() == "RIGHT_DOWN1":
+            EVA_arduino_serial_obj.write("h31".encode())
+        elif msg.payload.decode() == "RIGHT_DOWN2":
+            EVA_arduino_serial_obj.write("h32".encode())
+        elif msg.payload.decode() == "RIGHT_DOWN3":
+            EVA_arduino_serial_obj.write("h33".encode())
+
+        elif msg.payload.decode() == "CENTER_X":
+            EVA_arduino_serial_obj.write("hcx".encode())
+        elif msg.payload.decode() == "CENTER_Y":
+            EVA_arduino_serial_obj.write("hcy".encode())
+
+    # movimentos dos braços do robô.
     if msg.topic == topic_base + '/motion/arm/left':
         client.publish(topic_base + '/log', 'Moving the left arm: ' + msg.payload.decode())
         if msg.payload.decode() == "UP":
@@ -92,8 +146,10 @@ def on_message(client, userdata, msg):
             EVA_arduino_serial_obj.write("al2".encode())
         elif msg.payload.decode() == "POSITION 3":
             EVA_arduino_serial_obj.write("al3".encode())
-        elif msg.payload.decode() == "SHAKE":
+        elif msg.payload.decode() == "SHAKE1":
             EVA_arduino_serial_obj.write("als".encode())
+        elif msg.payload.decode() == "SHAKE2":
+            EVA_arduino_serial_obj.write("alS".encode())
 
     if msg.topic == topic_base + '/motion/arm/right':
         client.publish(topic_base + '/log', 'Moving the right arm: ' + msg.payload.decode())
@@ -109,8 +165,10 @@ def on_message(client, userdata, msg):
             EVA_arduino_serial_obj.write("ar2".encode())
         elif msg.payload.decode() == "POSITION 3":
             EVA_arduino_serial_obj.write("ar3".encode())
-        elif msg.payload.decode() == "SHAKE":
+        elif msg.payload.decode() == "SHAKE1":
             EVA_arduino_serial_obj.write("ars".encode())
+        elif msg.payload.decode() == "SHAKE2":
+            EVA_arduino_serial_obj.write("arS".encode())
 
 
 client = mqtt_client.Client()
