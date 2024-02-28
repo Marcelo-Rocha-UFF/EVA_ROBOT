@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename= 'css/style.css') }}">
+    <title>EVA Robot - System Modules</title>
+</head>
+<body>
+    <div align="center">
+        <img style="width: 90%" src="{{ url_for('static', filename= 'images/eva-logo.png') }}" />
+    </div>
+    </br></br></br>
+    <div>
+        <form action="/eva_all_modules" method="POST">
+            <button style="--clr:#39FF14; margin:9px; width:450px; height:200px; font-weight: bold;" name="btn_run_all_modules"><span>Run ALL Modules</span><i></i></button>
+            <button style="--clr:#FF0000; margin:9px; width:450px; height:200px; font-weight: bold;" name="btn_kill_all_modules"><span>KILL ALL Modules</span><i></i></button>
+        </form>
+    </div>
+    </br>
+    <div>
+        <form action="/eva_cv_module" method="POST">
+          <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_cv_module"><span>Run Computer Vision Module</span><i></i></button>
+          <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_cv_module"><span>KILL Computer Vision Module</span><i></i></button>
+        </form>
+        <form action="/eva_leds_module" method="POST">
+            <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_leds_module"><span>Run LEDs Module</span><i></i></button>
+            <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_leds_module"><span>KILL LEDs Module</span><i></i></button>
+        </form>
+        <form action="/eva_light_module" method="POST">
+          <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_light_module"><span>Run Light Module</span><i></i></button>
+          <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_light_module"><span>KILL Light Module</span><i></i></button>
+        </form>
+        <form action="/eva_motion_module" method="POST">
+          <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_motion_module"><span>Run Motion Module</span><i></i></button>
+          <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_motion_module"><span>KILL Motion Module</span><i></i></button>
+        </form>
+        <form action="/eva_audio_module" method="POST">
+          <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_audio_module"><span>Run Audio Module</span><i></i></button>
+          <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_audio_module"><span>KILL Audio Module</span><i></i></button>
+        </form>
+        <form action="/eva_tts_module" method="POST">
+            <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_tts_module"><span>Run TTS Module</span><i></i></button> 
+            <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_tts_module"><span>KILL TTS Module</span><i></i></button>
+        </form>
+        <form action="/eva_stt_module" method="POST">
+            <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_stt_module"><span>Run STT Module</span><i></i></button>
+            <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_stt_module"><span>KILL STT Module</span><i></i></button>
+        </form>
+        <form action="/eva_display_module" method="POST">
+          <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_display_module"><span>Run Display Module</span><i></i></button>
+          <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_display_module"><span>KILL Display Module</span><i></i></button>
+        </form>
+      </div>
+    </br></br></br></br>
+      <div align="center">
+        <img style="width: 90%" src="{{ url_for('static', filename= 'images/logos.png') }}" />
+    </div>
+</body>
+</html>

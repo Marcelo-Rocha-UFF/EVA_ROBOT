@@ -1,6 +1,6 @@
 from paho.mqtt import client as mqtt_client
 import subprocess
-import time
+
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
