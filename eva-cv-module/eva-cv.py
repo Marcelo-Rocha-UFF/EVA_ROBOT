@@ -127,6 +127,7 @@ def on_message(client, userdata, msg):
 ###################################################################################
     elif msg.topic == topic_base + '/userID':
         # Essa resolução apresentou bons resultados no processo de reconhecimento de expressões
+        user_recognized = False
         camera.resolution = (400, 400)
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(400, 400)) # 
@@ -150,11 +151,15 @@ def on_message(client, userdata, msg):
                         comparacao = fr.compare_faces([user_photo_encoded], user_file_encoded)
                         #distancia = fr.face_distance([user_photo_encoded], user_file_encoded)
                         if comparacao[0] == True:
+                            user_recognized = True
                             print("Usuario identificado:", file_name)
                             client.publish(topic_base + "/var/dollar", file_name.split('_')[0])
-                
+                            break
                 # clear the stream in preparation for the next frame
                 rawCapture.truncate(0)
+                if user_recognized == False:
+                    print("Usuario não identificado!")
+                    client.publish(topic_base + "/var/dollar", "unknown")
                 stop_FR = True
                 break
             if stop_FR:

@@ -25,7 +25,7 @@ def eva_cv_module():
     global cv_process
     if 'btn_run_cv_module' in request.form:
         print("Running Computer Vision module")
-        cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py", "-v"])
+        cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py"])
     elif 'btn_kill_cv_module' in request.form:
         if cv_process is not None: # o processo ainda não foi inicializado
             cv_process.terminate()

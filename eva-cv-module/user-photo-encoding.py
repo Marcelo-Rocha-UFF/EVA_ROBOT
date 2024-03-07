@@ -65,7 +65,7 @@ elif len(sys.argv) == 3: # obtém a imagem da camera
         # if the `q` key was pressed, break from the loop
         if key == ord("q"):
             break
-        elif key == ord("s"):
+        elif key == ord("s"): # salva a foto e o vetor na pasta users
             print("Saving photo...")
             image = cv2.resize(image, (200, 200))
             file_name = sys.argv[1]
@@ -87,16 +87,3 @@ elif len(sys.argv) == 3: # obtém a imagem da camera
             break
         rawCapture.truncate(0)
 
-
-
-# currentUser = fr.load_image_file('eva-cv-module/rachel1.jpg')
-#     currentUser = cv2.cvtColor(currentUser, cv2.COLOR_BGR2RGB)
-#     registeredUser = fr.load_image_file('eva-cv-module/users/rachel2.jpg')
-#     registeredUser = cv2.cvtColor(registeredUser, cv2.COLOR_BGR2RGB)
-#     print("Imagens encontradas...")
-#     encodeCurrentUser = fr.face_encodings(currentUser)[0]
-#     encodeRegisteredUser = fr.face_encodings(registeredUser)[0]
-#     print("Imagens codificadas...")
-# comparacao = fr.compare_faces([encodeCurrentUser], encodeRegisteredUser)
-# distancia = fr.face_distance([encodeCurrentUser], encodeRegisteredUser)
-# print(comparacao,distancia)
