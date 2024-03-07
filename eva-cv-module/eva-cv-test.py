@@ -1,5 +1,7 @@
 import argparse
+
 import time
+import os
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
@@ -17,6 +19,8 @@ from picamera import PiCamera
 import cv2
 import numpy as np
 
+import face_recognition as fr
+
 from tensorflow.keras.layers import (Conv2D, Dense, Dropout, Flatten, MaxPooling2D)
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten
@@ -29,12 +33,12 @@ port = config.MQTT_PORT # broker port
 topic_base = config.EVA_TOPIC_BASE
 
 
- #initialize the camera and grab a reference to the raw camera capture
+# initialize the camera
 camera = PiCamera()
-camera.resolution = (640, 480)
-camera.framerate = 29
-rawCapture = PiRGBArray(camera, size=(640, 480))
-# allow the camera to warmup
+# camera.resolution = (640, 480)
+# camera.framerate = 29
+# rawCapture = PiRGBArray(camera, size=(640, 480)) #  
+# # allow the camera to warmup
 time.sleep(0.1)
 print("The camera was initialized...")
 
@@ -46,14 +50,14 @@ parser.add_argument('-v', '--video', help='Display video capture window', action
 parser.add_argument('-fl', '--flip', help='Flip incoming video signal', action='store_true')
 args = parser.parse_args()
 
-# input arg parsing
-parser = argparse.ArgumentParser()
-parser.add_argument('-f', '--fullscreen',
-                    help='Display window in full screen', action='store_true')
-parser.add_argument('-v', '--video', help='Display video capture window', action='store_true')
-parser.add_argument(
-    '-fl', '--flip', help='Flip incoming video signal', action='store_true')
-args = parser.parse_args()
+# # input arg parsing
+# parser = argparse.ArgumentParser()
+# parser.add_argument('-f', '--fullscreen',
+#                     help='Display window in full screen', action='store_true')
+# parser.add_argument('-v', '--video', help='Display video capture window', action='store_true')
+# parser.add_argument(
+#     '-fl', '--flip', help='Flip incoming video signal', action='store_true')
+# args = parser.parse_args()
 
 
 
@@ -64,18 +68,24 @@ def on_connect(client, userdata, flags, rc):
     # reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/userEmotion', 1), ])
     client.subscribe(topic=[(topic_base + '/userID', 1), ])
-    client.subscribe(topic=[(topic_base + '/qrReader', 1), ])
+    client.subscribe(topic=[(topic_base + '/qrRead', 1), ])
     print("Computer Vision module CONNECTED.")
 
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
+
+######################################################################################################
+# Face Expression Recognition Submodule ##############################################################
+######################################################################################################
     if msg.topic == topic_base + '/userEmotion':
+        # Essa resolução apresentou bons resultados no processo de reconhecimento de expressões
+        camera.resolution = (640, 480)
+        camera.framerate = 10
+        rawCapture = PiRGBArray(camera, size=(640, 480)) # 
         print("Capturing an expression...")
         stop_FER = False
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-            # time for fps
-            start_time = time.time()
             image = frame.array
             facecasc = cv2.CascadeClassifier('eva-cv-module/haarcascade_frontalface_default.xml')  
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -112,11 +122,65 @@ def on_message(client, userdata, msg):
         client.publish(topic_base + "/state", "FREE")
 
 
-    if msg.topic == topic_base + '/userID':
-        print("Recognizing a face...")
+###################################################################################
+# Face recognition Submodule ######################################################
+###################################################################################
+    elif msg.topic == topic_base + '/userID':
+        # Essa resolução apresentou bons resultados no processo de reconhecimento de expressões
+        camera.resolution = (400, 400)
+        camera.framerate = 10
+        rawCapture = PiRGBArray(camera, size=(400, 400)) # 
+        print("Capturing a face...")
+        stop_FR = False
+        for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
+            image = frame.array
+            facecasc = cv2.CascadeClassifier('eva-cv-module/haarcascade_frontalface_default.xml')  
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            faces = facecasc.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
+            # ########################## Expression ##########################################
+            for (x, y, w, h) in faces:
+                print("Encoding the user face...")
+                image = cv2.resize(image, (200, 200))
+                user_photo_encoded = fr.face_encodings(image)[0] # A numpy array
+                file_list = os.listdir('eva-cv-module/users')
+                for file_name in file_list:
+                    if file_name.endswith(".npy"): # somente numpy arrays
+                        print("Comparing current user with:", file_name)
+                        user_file_encoded = np.load('eva-cv-module/users/' + file_name)
+                        comparacao = fr.compare_faces([user_photo_encoded], user_file_encoded)
+                        #distancia = fr.face_distance([user_photo_encoded], user_file_encoded)
+                        if comparacao[0] == True:
+                            print("Usuario identificado:", file_name)
+                            client.publish(topic_base + "/var/dollar", file_name.split('_')[0])
+                
+                # clear the stream in preparation for the next frame
+                rawCapture.truncate(0)
+                stop_FR = True
+                break
+            if stop_FR:
+                break
+            # Display video capture window
+            if args.video:
+                cv2.imshow("Frame", image)
+
+                key = cv2.waitKey(1) & 0xFF
+
+                # if the `q` key was pressed, break from the loop
+                if key == ord("q"):
+                    break
+            # clear the stream in preparation for the next frame
+            rawCapture.truncate(0)
+        client.publish(topic_base + "/state", "FREE")
 
 
-    if msg.topic == topic_base + '/qrReader':
+
+###################################################################################
+# QR Code Reader Submodule ########################################################
+###################################################################################
+    elif msg.topic == topic_base + '/qrRead':
+        camera.resolution = (1920, 1080) # esta resulução apresentou melhoras no reconhecimento do QR
+        camera.framerate = 10
+        rawCapture = PiRGBArray(camera)
         print("Trying to read a QR Code...")
         qrCodeDetector = cv2.QRCodeDetector() # detector de QRCode
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
@@ -125,6 +189,7 @@ def on_message(client, userdata, msg):
             decodedText, points, _ = qrCodeDetector.detectAndDecode(gray)  
             if (decodedText != ""):
                 print(decodedText)
+                client.publish(topic_base + "/var/dollar", decodedText)
                 # clear the stream in preparation for the next frame
                 rawCapture.truncate(0)
                 break
@@ -142,7 +207,7 @@ def on_message(client, userdata, msg):
                     break
             # clear the stream in preparation for the next frame
             rawCapture.truncate(0)
-
+        client.publish(topic_base + "/state", "FREE")
 
 
 # create model
@@ -171,66 +236,6 @@ model.load_weights('eva-cv-module/model.h5')
 emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
 
 qrCodeDetector = cv2.QRCodeDetector() # detector de QRCode
-
-# #########################################################################################################
-# for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
-#     print("Entrou no FOR.............")
-#     # time for fps
-#     start_time = time.time()
-
-# 	# grab the raw NumPy array representing the image, then initialize the timestamp
-# 	# and occupied/unoccupied text
-
-
-#     image = frame.array
-#     #facecasc = cv2.CascadeClassifier('eva-cv-module/haarcascade_frontalface_default.xml')  
-#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-#     #faces = facecasc.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
-	
-# ########################## Expression ##########################################
-#     # for (x, y, w, h) in faces:
-#     #     cv2.rectangle(image, (x, y-50), (x+w, y+h+10), (255, 0, 0), 2)
-#     #     roi_gray = gray[y:y + h, x:x + w]
-#     #     cropped_img = np.expand_dims(np.expand_dims(
-#     #         cv2.resize(roi_gray, (48, 48)), -1), 0)
-#     #     prediction = model.predict(cropped_img)
-#     #     maxindex = int(np.argmax(prediction))
-#     #     emotion_label = emotion_dict[maxindex]
-#     #     print(emotion_label)
-#     #     cv2.putText(image, emotion_label, (x+20, y-60),
-#     #         cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-    
-# ############ QR Reader ############################
-#     decodedText, points, _ = qrCodeDetector.detectAndDecode(gray)  
-#     if (decodedText != ""):
-#         print(decodedText)  
-#     else:
-#         print("----------------------")
-    
-
-
-#     # Display video capture window
-#     if args.video:
-#         fps = str(int(1.0 / (time.time() - start_time)))
-#         #cv2.putText(image, fps + " fps", (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-#         cv2.putText(gray, fps + " fps", (20, 60), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
-        
-#         # show the frame
-#         #cv2.imshow("Frame", image)
-#         cv2.imshow("Frame", gray)
-
-#         key = cv2.waitKey(1) & 0xFF
-
-#         # if the `q` key was pressed, break from the loop
-#         if key == ord("q"):
-#             break
-
-#     # clear the stream in preparation for the next frame
-#     rawCapture.truncate(0)
-# #########################################################################################################
-
-
-#cv2.destroyAllWindows()
 
 client = mqtt_client.Client()
 client.on_connect = on_connect
