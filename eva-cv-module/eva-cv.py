@@ -141,14 +141,14 @@ def on_message(client, userdata, msg):
             # ########################## Expression ##########################################
             for (x, y, w, h) in faces:
                 print("Encoding the user face...")
-                image = cv2.resize(image, (200, 200))
+                #image = cv2.resize(image, (200, 200))
                 user_photo_encoded = fr.face_encodings(image)[0] # A numpy array
                 file_list = os.listdir('eva-cv-module/users')
                 for file_name in file_list:
                     if file_name.endswith(".npy"): # somente numpy arrays
                         print("Comparing current user with:", file_name)
                         user_file_encoded = np.load('eva-cv-module/users/' + file_name)
-                        comparacao = fr.compare_faces([user_photo_encoded], user_file_encoded)
+                        comparacao = fr.compare_faces([user_photo_encoded], user_file_encoded, 0.35)
                         #distancia = fr.face_distance([user_photo_encoded], user_file_encoded)
                         if comparacao[0] == True:
                             user_recognized = True

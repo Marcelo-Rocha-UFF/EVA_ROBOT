@@ -135,7 +135,7 @@ def eva_display_module():
 def eva_all_modules():
     global cv_process, tts_process, leds_process, light_process, audio_process, motion_process, stt_process, display_process
     if 'btn_run_all_modules' in request.form:
-        cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py", "-v"])
+        cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py"])
         tts_process = subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
         leds_process = subprocess.Popen(["python3", "eva-leds-module/eva-leds.py"])
         light_process = subprocess.Popen(["python3", "eva-light-module/eva-light.py"])

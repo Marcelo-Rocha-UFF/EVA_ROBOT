@@ -67,7 +67,7 @@ elif len(sys.argv) == 3: # obtém a imagem da camera
             break
         elif key == ord("s"): # salva a foto e o vetor na pasta users
             print("Saving photo...")
-            image = cv2.resize(image, (200, 200))
+            image = cv2.resize(image, (400, 400))
             file_name = sys.argv[1]
             print("Encoding image:", file_name)
             user_photo_encoded = fr.face_encodings(image)[0] # A numpy array
