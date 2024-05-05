@@ -11,14 +11,14 @@ import subprocess
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
-import config # Modulo com as configurações dos dispositivos de rede
+import config # Módulo com as configurações dos dispositivos de rede.
 
-broker = config.MQTT_BROKER_ADRESS # broker adress
-port = config.MQTT_PORT # broker port
+broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
+port = config.MQTT_PORT # Porta do Broker.
 topic_base = config.EVA_TOPIC_BASE
 
 
-p = "" # variavel que armazenara o subprocesso que roda a animacao da martixvoice
+p = "" # Variável que armazena o subprocesso que roda a animação da Martix Voice.
 
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
@@ -61,10 +61,15 @@ def on_message(client, userdata, msg):
 
            
 
+# Executa a thread do cliente MQTT.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(broker, port)
+try:
+    client.connect(broker, port)
+except:
+    print ("Unable to connect to Broker.")
+    exit(1)
 
 
 client.loop_forever()

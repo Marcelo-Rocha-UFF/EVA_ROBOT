@@ -1,33 +1,30 @@
 import serial
-import time
 
 from paho.mqtt import client as mqtt_client
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
-import config # Modulo com as configurações dos dispositivos de rede
+import config # Módulo com as configurações dos dispositivos de rede.
 
-broker = config.MQTT_BROKER_ADRESS # broker adress
-port = config.MQTT_PORT # broker port
+broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
+port = config.MQTT_PORT # Porta do Broker.
 topic_base = config.EVA_TOPIC_BASE
 
-EVA_SERIAL_PORT = config.EVA_SERIAL_PORT
-BAUD_RATE = config.BAUD_RATE
-
-
+EVA_SERIAL_PORT = config.EVA_SERIAL_PORT # Nome da porta serial do EVA.
+BAUD_RATE = config.BAUD_RATE # Velocidade de transmissão serial.
 
 EVA_arduino_serial_obj = serial.Serial(EVA_SERIAL_PORT, BAUD_RATE)
+
 
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    #print("Connected with result code " + str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
+    # reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/motion/head', 1), ])
     client.subscribe(topic=[(topic_base + '/motion/arm/left', 1), ])
     client.subscribe(topic=[(topic_base + '/motion/arm/right', 1), ])
-    print("Motion module CONNECTED.")
+    print("Motion Module - Connected.")
 
 
 
@@ -35,7 +32,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/motion/head':
         client.publish(topic_base + '/log', 'Moving the head: ' + msg.payload.decode())
-        # mantendo a compatibilidade com a versão antiga.
+        # Mantendo a compatibilidade com a versão antiga.
         if msg.payload.decode() == "CENTER":
             EVA_arduino_serial_obj.write("c".encode())
         elif msg.payload.decode() == "RIGHT":
@@ -78,7 +75,7 @@ def on_message(client, userdata, msg):
             EVA_arduino_serial_obj.write("z".encode())
         elif msg.payload.decode() == "2DOWN_LEFT":
             EVA_arduino_serial_obj.write("Z".encode())
-        # usando a nova versão de controle dos movimentos da cabeça.
+        # Usando a nova versão de controle dos movimentos da cabeça.
         elif msg.payload.decode() == "UP1":
             EVA_arduino_serial_obj.write("hu1".encode())
         elif msg.payload.decode() == "UP2":
@@ -131,7 +128,7 @@ def on_message(client, userdata, msg):
         elif msg.payload.decode() == "CENTER_Y":
             EVA_arduino_serial_obj.write("hcy".encode())
 
-    # movimentos dos braços do robô.
+    # Movimentos dos braços do robô.
     if msg.topic == topic_base + '/motion/arm/left':
         client.publish(topic_base + '/log', 'Moving the left arm: ' + msg.payload.decode())
         if msg.payload.decode() == "UP":
@@ -171,10 +168,15 @@ def on_message(client, userdata, msg):
             EVA_arduino_serial_obj.write("arS".encode())
 
 
+# Executa a thread do cliente MQTT.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(broker, port)
+try:
+    client.connect(broker, port)
+except:
+    print ("Unable to connect to Broker.")
+    exit(1)
 
 
 client.loop_forever()

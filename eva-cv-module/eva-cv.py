@@ -5,10 +5,10 @@ import os
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
-import config # Modulo com as configurações dos dispositivos de rede
+import config # Módulo com as configurações dos dispositivos de rede.
 
-broker = config.MQTT_BROKER_ADRESS # broker adress
-port = config.MQTT_PORT # broker port
+broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
+port = config.MQTT_PORT # Porta do Broker.
 topic_base = config.EVA_TOPIC_BASE
 
 from paho.mqtt import client as mqtt_client
@@ -23,24 +23,18 @@ import face_recognition as fr
 
 from tensorflow.keras.layers import (Conv2D, Dense, Dropout, Flatten, MaxPooling2D)
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.layers import Conv2D
-from tensorflow.keras.layers import MaxPooling2D
+# from tensorflow.keras.layers import Dense, Dropout, Flatten
+# from tensorflow.keras.layers import Conv2D
+# from tensorflow.keras.layers import MaxPooling2D
 
 
-broker = config.MQTT_BROKER_ADRESS # broker adress
-port = config.MQTT_PORT # broker port
-topic_base = config.EVA_TOPIC_BASE
 
-
-# initialize the camera
+# Inicializa a câmera
 camera = PiCamera()
-# camera.resolution = (640, 480)
-# camera.framerate = 29
-# rawCapture = PiRGBArray(camera, size=(640, 480)) #  
-# # allow the camera to warmup
+
+# Tempo necessário para a camera inicializar
 time.sleep(0.1)
-print("The camera was initialized...")
+print("The camera was initialized.")
 
 # input arg parsing
 parser = argparse.ArgumentParser()
@@ -49,16 +43,6 @@ parser.add_argument('-f', '--fullscreen',
 parser.add_argument('-v', '--video', help='Display video capture window', action='store_true')
 parser.add_argument('-fl', '--flip', help='Flip incoming video signal', action='store_true')
 args = parser.parse_args()
-
-# # input arg parsing
-# parser = argparse.ArgumentParser()
-# parser.add_argument('-f', '--fullscreen',
-#                     help='Display window in full screen', action='store_true')
-# parser.add_argument('-v', '--video', help='Display video capture window', action='store_true')
-# parser.add_argument(
-#     '-fl', '--flip', help='Flip incoming video signal', action='store_true')
-# args = parser.parse_args()
-
 
 
 # MQTT
@@ -69,7 +53,7 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(topic=[(topic_base + '/userEmotion', 1), ])
     client.subscribe(topic=[(topic_base + '/userID', 1), ])
     client.subscribe(topic=[(topic_base + '/qrRead', 1), ])
-    print("Computer Vision module CONNECTED.")
+    print("Computer Vision Module - Connected.")
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -83,7 +67,7 @@ def on_message(client, userdata, msg):
         camera.resolution = (640, 480)
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(640, 480)) # 
-        print("Capturing an expression...")
+        print("Capturing a facial expression.")
         stop_FER = False
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
@@ -102,36 +86,36 @@ def on_message(client, userdata, msg):
                 print(emotion_label)
                 cv2.putText(image, emotion_label, (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
                 client.publish(topic_base + "/var/dollar", emotion_label)
-                # clear the stream in preparation for the next frame
+                # Limpa o fluxo preparando para capturar o próximo frame.
                 rawCapture.truncate(0)
                 stop_FER = True
                 break
             if stop_FER:
                 break
-            # Display video capture window
+            # Mostra a janela de captura do vídeo.
             if args.video:
                 cv2.imshow("Frame", image)
 
                 key = cv2.waitKey(1) & 0xFF
 
-                # if the `q` key was pressed, break from the loop
+                # A tecla 'q' quebra o loop.
                 if key == ord("q"):
                     break
-            # clear the stream in preparation for the next frame
+            # Limpa o fluxo preparando para capturar o próximo frame.
             rawCapture.truncate(0)
-        client.publish(topic_base + "/state", "FREE")
+        client.publish(topic_base + "/state", "FREE - (CV_FACIAL_EXPRESSION_RECOGNITION)")
 
 
 ###################################################################################
 # Face recognition Submodule ######################################################
 ###################################################################################
     elif msg.topic == topic_base + '/userID':
-        # Essa resolução apresentou bons resultados no processo de reconhecimento de expressões
+        # Essa resolução apresentou bons resultados no processo de reconhecimento facial
         user_recognized = False
         camera.resolution = (400, 400)
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(400, 400)) # 
-        print("Capturing a face...")
+        print("Capturing a face.")
         stop_FR = False
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
@@ -140,42 +124,42 @@ def on_message(client, userdata, msg):
             faces = facecasc.detectMultiScale(gray, scaleFactor=1.3, minNeighbors=5)
             # ########################## Expression ##########################################
             for (x, y, w, h) in faces:
-                print("Encoding the user face...")
+                print("Encoding a face...")
                 #image = cv2.resize(image, (200, 200))
                 user_photo_encoded = fr.face_encodings(image)[0] # A numpy array
                 file_list = os.listdir('eva-cv-module/users')
                 for file_name in file_list:
                     if file_name.endswith(".npy"): # somente numpy arrays
-                        print("Comparing current user with:", file_name)
+                        print("Comparing current user with: ", file_name)
                         user_file_encoded = np.load('eva-cv-module/users/' + file_name)
                         comparacao = fr.compare_faces([user_photo_encoded], user_file_encoded, 0.35)
                         #distancia = fr.face_distance([user_photo_encoded], user_file_encoded)
                         if comparacao[0] == True:
                             user_recognized = True
-                            print("Usuario identificado:", file_name)
+                            print("User identified: ", file_name)
                             client.publish(topic_base + "/var/dollar", file_name.split('_')[0])
                             break
-                # clear the stream in preparation for the next frame
+                # Limpa o fluxo preparando para capturar o próximo frame.
                 rawCapture.truncate(0)
                 if user_recognized == False:
-                    print("Usuario não identificado!")
+                    print("The user could not be identified!")
                     client.publish(topic_base + "/var/dollar", "unknown")
                 stop_FR = True
                 break
             if stop_FR:
                 break
-            # Display video capture window
+            # Mostra a janela de captura do vídeo.
             if args.video:
                 cv2.imshow("Frame", image)
 
                 key = cv2.waitKey(1) & 0xFF
 
-                # if the `q` key was pressed, break from the loop
+                # A tecla 'q' quebra o loop.
                 if key == ord("q"):
                     break
-            # clear the stream in preparation for the next frame
+            # Limpa o fluxo preparando para capturar o próximo frame.
             rawCapture.truncate(0)
-        client.publish(topic_base + "/state", "FREE")
+        client.publish(topic_base + "/state", "FREE - (CV_FACE_RECOGNITION)")
 
 
 
@@ -195,27 +179,27 @@ def on_message(client, userdata, msg):
             if (decodedText != ""):
                 print(decodedText)
                 client.publish(topic_base + "/var/dollar", decodedText)
-                # clear the stream in preparation for the next frame
+                # Limpa o fluxo preparando para capturar o próximo frame.
                 rawCapture.truncate(0)
                 break
             else:
                 pass
             
-            # Display video capture window
+            # Mostra a janela de captura do vídeo.
             if args.video:
                 cv2.imshow("Frame", gray)
 
                 key = cv2.waitKey(1) & 0xFF
 
-                # if the `q` key was pressed, break from the loop
+                # A tecla 'q' quebra o loop.
                 if key == ord("q"):
                     break
-            # clear the stream in preparation for the next frame
+            # Limpa o fluxo preparando para capturar o próximo frame.
             rawCapture.truncate(0)
-        client.publish(topic_base + "/state", "FREE")
+        client.publish(topic_base + "/state", "FREE - (CV_QR_CODE)")
 
 
-# create model
+# Cria as 7 camadas para o modelo.
 model = Sequential()
 
 model.add(Conv2D(32, kernel_size=(3, 3),
@@ -235,17 +219,21 @@ model.add(Dense(1024, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(7, activation='softmax'))
 
+# Carrega o modelo com seus pesos.
 model.load_weights('eva-cv-module/model.h5')
 
-# dictionary which assigns each label an emotion (alphabetical order)
-emotion_dict = {0: "Angry", 1: "Disgust", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
+# Associa as classes aos seus nomes
+emotion_dict = {0: "ANGRY", 1: "DISGUST", 2: "FEARFUL", 3: "HAPPY", 4: "NEUTRAL", 5: "SAD", 6: "SUSPRISED"}
 
-qrCodeDetector = cv2.QRCodeDetector() # detector de QRCode
 
+# Executa a thread do cliente MQTT.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(broker, port)
-
+try:
+    client.connect(broker, port)
+except:
+    print ("Unable to connect to Broker.")
+    exit(1)
 
 client.loop_forever()

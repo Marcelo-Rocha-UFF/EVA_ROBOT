@@ -4,10 +4,10 @@ import subprocess
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
-import config # Modulo com as configurações dos dispositivos de rede
+import config # Módulo com as configurações dos dispositivos de rede.
 
-broker = config.MQTT_BROKER_ADRESS # broker adress
-port = config.MQTT_PORT # broker port
+broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
+port = config.MQTT_PORT # Porta do Broker.
 topic_base = config.EVA_TOPIC_BASE
 
 
@@ -18,25 +18,23 @@ def playsound(file_path, audio_file, type, block = True):
             audio_format = config.AUDIO_EXTENSION
         elif type == "speech":
             audio_format = config.WATSON_AUDIO_EXTENSION
-            client.publish(topic_base + "/log", "EVA spoke the text and is FREE now.")
+            client.publish(topic_base + "/log", "EVA spoke the text and is free now.")
         
-        # sound = pygame.mixer.Sound(file_path + audio_file + audio_format)
-        # playing = sound.play()
         if block == True:
-            print("Blocking audio.")
+            print('Playing audio in BLOCKING mode.')
             play = subprocess.Popen(['play', file_path + audio_file + audio_format], stdout=subprocess.PIPE)
             play.communicate()[0]
         else:
-            print("No-blocking audio.")
+            print('Playing audio in NON-BLOCKING mode.')
             play = subprocess.Popen(['play', file_path + audio_file + audio_format], stdout=subprocess.PIPE)
 
         
 
-# speaking is always bloking. The function is responsable to FREE the robot state
+# A fala é sempre do tipo (Blocking). A função playsound é responsável por colocar o estado do robô como "FREE".
 def speech(audio_file, block = True):
         file_path = "eva-tts-module/tts_cache_files/"
         playsound(file_path, audio_file, "speech", block)
-        client.publish(topic_base + "/state", "FREE")
+        client.publish(topic_base + "/state", "FREE - (AUDIO_SPEAK)") 
 
 
 # MQTT
@@ -47,7 +45,7 @@ def on_connect(client, userdata, flags, rc):
         # reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/audio', 1), ])
     client.subscribe(topic=[(topic_base + '/speech', 1), ])
-    print("Audio module CONNECTED.")
+    print("Audio Module - Connected.")
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -57,19 +55,23 @@ def on_message(client, userdata, msg):
         block = msg.payload.decode().split("|")[1]
         if block == "TRUE":
             playsound("eva-audio-module/audio_files/", file_name, "audio", True)
-            client.publish(topic_base + "/state", "FREE") # libera o robô
+            client.publish(topic_base + "/state", "FREE - (AUDIO_SOUND)") # Libera o robô
         else:
             playsound("eva-audio-module/audio_files/", file_name, "audio", False) 
 
     if msg.topic == topic_base + '/speech':
         file_name = msg.payload.decode()
-        speech(file_name, True) # It's always blocking
+        speech(file_name, True) # A fala roda sempre no modo "Blocking".
 
-    
+
+# Executa a thread do cliente MQTT.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
-client.connect(broker, port)
-
+try:
+    client.connect(broker, port)
+except:
+    print ("Unable to connect to Broker.")
+    exit(1)
 
 client.loop_forever()

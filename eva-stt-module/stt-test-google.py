@@ -3,10 +3,6 @@
 import speech_recognition as sr
 
 
-# import sys
-# sys.path.append('/home/pi/EVA_ROBOT')
-
-
 # obtain audio from the microphone
 r = sr.Recognizer()
 
