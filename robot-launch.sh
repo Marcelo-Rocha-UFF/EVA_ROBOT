@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Ativa o ambiente virtual do EVA
+# Activate the EVA virtual environment
 source /home/pi/EVA_ROBOT/venv/bin/activate
 
-# Esse comando é necessário para que a interface gráfica (display) do robô possa ser executada via linha de comando.
+# This command is necessary so that the robot's graphical interface (display) can be executed via the command line.
 export DISPLAY=:0.0
 
-# Executa a aplicação Web que permite executar e "matar" os módulos do EVA.
-# A aplicação pode ser acessada pelo IP do Raspberry, na porta 5000.
+# Run the Web application that allows you to run and "kill" the EVA modules.
+# The application can be accessed via the Raspberry IP, on port 5000.
 python3 /home/pi/EVA_ROBOT/robot-system-web-run.py

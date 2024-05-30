@@ -4,7 +4,7 @@ import os
 import time
 
 
-# Variáveis para os processos dos módulos.
+# Variables for module processes.
 cv_process = None
 tts_process = None
 leds_process = None
@@ -27,7 +27,7 @@ def eva_cv_module():
         print("Running Computer Vision module")
         cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py"])
     elif 'btn_kill_cv_module' in request.form:
-        if cv_process is not None: # O processo ainda não foi inicializado.
+        if cv_process is not None: # The process has not yet been initialized.
             cv_process.terminate()
             time.sleep(0.5)
             cv_process.poll()
@@ -40,7 +40,7 @@ def eva_tts_module():
         print("Running TTS module")
         tts_process = subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
     elif 'btn_kill_tts_module' in request.form:
-        if tts_process is not None: # O processo ainda não foi inicializado.
+        if tts_process is not None: # The process has not yet been initialized.
             tts_process.terminate()
             time.sleep(0.5)
             tts_process.poll()
@@ -54,7 +54,7 @@ def eva_leds_module():
         print("Running LEDs module")
         leds_process = subprocess.Popen(["python3", "eva-leds-module/eva-leds.py"])
     elif 'btn_kill_leds_module' in request.form:
-        if leds_process  is not None: # O processo ainda não foi inicializado.
+        if leds_process  is not None: # The process has not yet been initialized.
             leds_process.terminate()
             time.sleep(0.5)
             leds_process.poll()
@@ -68,7 +68,7 @@ def eva_light_module():
         print("Running Light module")
         light_process = subprocess.Popen(["python3", "eva-light-module/eva-light.py"])
     elif 'btn_kill_light_module' in request.form:
-        if light_process is not None: # O processo ainda não foi inicializado.  
+        if light_process is not None: # The process has not yet been initialized.
             light_process.terminate()
             time.sleep(0.5)
             light_process.poll()
@@ -82,7 +82,7 @@ def eva_audio_module():
         print("Running Audio module")
         audio_process = subprocess.Popen(["python3", "eva-audio-module/eva-audio.py"])
     elif 'btn_kill_audio_module' in request.form:
-        if audio_process is not None: # O processo ainda não foi inicializado.  
+        if audio_process is not None: # The process has not yet been initialized. 
             audio_process.terminate()
             time.sleep(0.5)
             audio_process.poll()
@@ -96,7 +96,7 @@ def eva_motion_module():
         print("Running Motion module")
         motion_process = subprocess.Popen(["python3", "eva-motion-module/eva-motion.py"])
     elif 'btn_kill_motion_module' in request.form:
-        if motion_process is not None: # O processo ainda não foi inicializado.
+        if motion_process is not None: # The process has not yet been initialized.
             motion_process.terminate()
             time.sleep(0.5)
             motion_process.poll()
@@ -110,7 +110,7 @@ def eva_stt_module():
         print("Running STT module")
         stt_process = subprocess.Popen(["python3", "eva-stt-module/eva-stt.py"])
     elif 'btn_kill_stt_module' in request.form:
-        if stt_process is not None: # O processo ainda não foi inicializado.
+        if stt_process is not None: # The process has not yet been initialized.
             stt_process.terminate()
             time.sleep(0.5)
             stt_process.poll()
@@ -124,13 +124,13 @@ def eva_display_module():
         print("Running Display module")
         display_process = subprocess.Popen(["python3", "eva-display-module/eva-display.py"])
     elif 'btn_kill_display_module' in request.form:
-        if display_process is not None: # O processo ainda não foi inicializado.
+        if display_process is not None: # The process has not yet been initialized.
             display_process.terminate()
             time.sleep(0.5)
             display_process.poll()
     return render_template("index.html")
 
-# Executando ou "Matando" todos processos.
+# Running or "Killing" all processes.
 @app.route("/eva_all_modules", methods=["POST"])
 def eva_all_modules():
     global cv_process, tts_process, leds_process, light_process, audio_process, motion_process, stt_process, display_process
@@ -167,5 +167,5 @@ def eva_all_modules():
         os.system("pkill -f eva")
     return render_template("index.html")
 
-# Coloca a aplicação Web para rodar.
+# Start the web application.
 app.run(host="0.0.0.0", debug = True) 

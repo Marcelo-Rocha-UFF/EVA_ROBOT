@@ -3,35 +3,35 @@
 
 from paho.mqtt import client as mqtt_client
 
-import time
-
 import os
 import signal
 import subprocess
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
-import config # Módulo com as configurações dos dispositivos de rede.
+import config # Module with network device configurations.
 
-broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
-port = config.MQTT_PORT # Porta do Broker.
+broker = config.MQTT_BROKER_ADRESS # Broker address.
+port = config.MQTT_PORT # Broker Port.
 topic_base = config.EVA_TOPIC_BASE
 
 
-p = "" # Variável que armazena o subprocesso que roda a animação da Martix Voice.
+p = "" # Variable that stores the subprocess that runs the Martix Voice animation.
 
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code " + str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
+    # Reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/leds', 1), ])
     
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    global p
+    global p # process
     if msg.topic == topic_base + '/leds':
+        if msg.payload.decode() != "STOP": # Only prints for commands other than STOP
+            client.publish(topic_base + '/log', "Leds Animation: " + msg.payload.decode()) 
         if msg.payload.decode() == "ANGRY": 
             p = subprocess.Popen("eva-leds-module/leds-animation/angry", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "ANGRY2":
@@ -61,7 +61,7 @@ def on_message(client, userdata, msg):
 
            
 
-# Executa a thread do cliente MQTT.
+# Run the MQTT client thread.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message

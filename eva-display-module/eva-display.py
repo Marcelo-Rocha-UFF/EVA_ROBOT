@@ -1,6 +1,6 @@
-# Há um pequeno bug nesse módulo.
-# De vez em quando, um comando de expressões faz com que o robô passe por todas as expressões até chegar na expressão alvo.
-# Isso deve er alguma bobeira na lógica que trata dos estados das expressões.
+# There is a small bug in this module.
+# Every now and then, an expression command causes the robot to go through all the expressions until it reaches the target expression.
+# This must be some small detail in the logic that deals with the states of expressions.
 
 from paho.mqtt import client as mqtt_client
 
@@ -15,15 +15,15 @@ import sys
 
 sys.path.append('/home/pi/EVA_ROBOT')
 
-import config # Módulo com as configurações dos dispositivos de rede.
+import config # Module with network device configurations.
 
-broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
-port = config.MQTT_PORT # Porta do Broker.
+broker = config.MQTT_BROKER_ADRESS # Broker address.
+port = config.MQTT_PORT # Broker Port.
 topic_base = config.EVA_TOPIC_BASE
 
 
 class ImageLabel(tk.Label):
-    """um label que exibe imagens e as reproduz se forem gifs"""
+    """a label that displays images and plays them if they are gifs"""
     def load(self, im):
         if isinstance(im, str):
             im = Image.open(im)
@@ -46,7 +46,7 @@ class ImageLabel(tk.Label):
         try:
             self.delay = im.info['duration']
         except:
-            self.delay = 100 # Controla a velocidade de exibição dos frames.
+            self.delay = 100 # Controls the display speed of frames.
 
         if len(self.frames) == 1:
             self.config(image=self.frames[0])
@@ -68,10 +68,10 @@ class ImageLabel(tk.Label):
             if self.currentstate == "null":
                 self.currentstate = "neutral"
 
-            if self.currentstate == "neutral": # Mudanças de estado partindo do "neutral".
+            if self.currentstate == "neutral": # State changes starting from "neutral".
                 if self.targetstate == "blink":
                     if self.stopped:
-                        self.frame = 1 # Frame inicial da animação.
+                        self.frame = 1 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 2:
@@ -85,7 +85,7 @@ class ImageLabel(tk.Label):
                 
                 if self.targetstate == "inlove":
                     if self.stopped:
-                        self.frame = 27 # Frame inicial da animação.
+                        self.frame = 27 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 28:
@@ -98,7 +98,7 @@ class ImageLabel(tk.Label):
 
                 if self.targetstate == "disgust":
                     if self.stopped:
-                        self.frame = 23 # Frame inicial da animação.
+                        self.frame = 23 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 24:
@@ -111,7 +111,7 @@ class ImageLabel(tk.Label):
 
                 if self.targetstate == "surprise":
                     if self.stopped:
-                        self.frame = 19 # Frame inicial da animação.
+                        self.frame = 19 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 20:
@@ -124,7 +124,7 @@ class ImageLabel(tk.Label):
 
                 if self.targetstate == "fear":
                     if self.stopped:
-                        self.frame = 15 # Frame inicial da animação.
+                        self.frame = 15 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 16:
@@ -137,7 +137,7 @@ class ImageLabel(tk.Label):
 
                 if self.targetstate == "happy":
                     if self.stopped:
-                        self.frame = 11 # Frame inicial da animação.
+                        self.frame = 11 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 12:
@@ -150,7 +150,7 @@ class ImageLabel(tk.Label):
 
                 if self.targetstate == "sad":
                     if self.stopped:
-                        self.frame = 7 # Frame inicial da animação.
+                        self.frame = 7 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 8:
@@ -163,7 +163,7 @@ class ImageLabel(tk.Label):
 
                 if self.targetstate == "angry":
                     if self.stopped:
-                        self.frame = 3 # Frame inicial da animação.
+                        self.frame = 3 # Initial frame of the animation.
                         self.stopped = False
                     else:
                         if self.frame > 4:
@@ -176,13 +176,13 @@ class ImageLabel(tk.Label):
 
                 
 
-            # Faz a transição de todos os estados para o "neutral".
-            elif self.targetstate == "blink": # Não deve funcionar quando não está em "neutral".
+            # Transitions all states to "neutral".
+            elif self.targetstate == "blink": # Should not work when not in "neutral".
                 pass
             
             elif self.currentstate == "inlove":
                 if self.stopped:
-                        self.frame = 29 # Frame inicial da animação.
+                        self.frame = 29 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 30:
@@ -195,7 +195,7 @@ class ImageLabel(tk.Label):
 
             elif self.currentstate == "disgust":
                 if self.stopped:
-                        self.frame = 25 # Frame inicial da animação.
+                        self.frame = 25 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 26:
@@ -208,7 +208,7 @@ class ImageLabel(tk.Label):
 
             elif self.currentstate == "surprise":
                 if self.stopped:
-                        self.frame = 21 # Frame inicial da animação.
+                        self.frame = 21 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 22:
@@ -221,7 +221,7 @@ class ImageLabel(tk.Label):
 
             elif self.currentstate == "fear":
                 if self.stopped:
-                        self.frame = 17 # Frame inicial da animação.
+                        self.frame = 17 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 18:
@@ -234,7 +234,7 @@ class ImageLabel(tk.Label):
 
             elif self.currentstate == "happy":
                 if self.stopped:
-                        self.frame = 13 # Frame inicial da animação.
+                        self.frame = 13 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 14:
@@ -247,7 +247,7 @@ class ImageLabel(tk.Label):
 
             elif self.currentstate == "sad":
                 if self.stopped:
-                        self.frame = 9 # Frame inicial da animação.
+                        self.frame = 9 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 10:
@@ -260,7 +260,7 @@ class ImageLabel(tk.Label):
 
             elif self.currentstate == "angry":
                 if self.stopped:
-                        self.frame = 5 # Frame inicial da animação.
+                        self.frame = 5 # Initial frame of the animation.
                         self.stopped = False
                 else:
                     if self.frame > 6:
@@ -299,7 +299,7 @@ class ImageLabel(tk.Label):
             exit(0)
 
 
-#Janela Tk
+# Tk Window
 root = tk.Tk()
 root.attributes("-fullscreen", True)
 lbl = ImageLabel(root)
@@ -308,14 +308,14 @@ lbl.load("eva-display-module/eva-expressions.gif")
 root.bind('<Key>', lbl.key_press)
 
 
-# Abertura do EVA (Pode se comentada)
+# Opening of EVA (Can be commented)
 from vlc import *
 media_player = MediaPlayer()
 media = Media("eva-abertura-logo.mp4")
 media_player.set_media(media)
 media_player.toggle_fullscreen()
 media_player.play()
-time.sleep(0.1) # tempo para o inicio do play pelo vlc
+time.sleep(0.1) # Time to start the video using VLC
 while media_player.is_playing():
             time.sleep(.1)
 
@@ -324,12 +324,12 @@ while media_player.is_playing():
 # MQTT
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    #print("Connected with result code " + str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
-        # reconnect then subscriptions will be renewed.
+    # Reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/evaEmotion', 1), ])
     print("Display Module - Connected.")
     
+
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/evaEmotion':
@@ -354,7 +354,7 @@ def on_message(client, userdata, msg):
             lbl.targetstate = "blink"
 
             
-# Executa a thread do cliente MQTT.
+# Run the MQTT client thread.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
@@ -364,10 +364,10 @@ except:
     print ("Unable to connect to Broker.")
     exit(1)
 
-# Não se pode usar o método forever (como no outros módulos) porque ele bloqueia
-# não permitindo que o loop da thread da interface gráfica execute, no comando seguinte.
+# You cannot use the "forever" method (as in other modules) because it blocks not allowing
+# for the graphical interface thread loop to execute.
 client.loop_start()
 
 
-# Executa a thread da interface gráfica.
+# Executes the graphical interface thread.
 root.mainloop()

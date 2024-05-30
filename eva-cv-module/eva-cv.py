@@ -5,10 +5,10 @@ import os
 
 import sys
 sys.path.append('/home/pi/EVA_ROBOT')
-import config # Módulo com as configurações dos dispositivos de rede.
+import config # Module with network device configurations.
 
-broker = config.MQTT_BROKER_ADRESS # Endereço do Broker.
-port = config.MQTT_PORT # Porta do Broker.
+broker = config.MQTT_BROKER_ADRESS # Broker address.
+port = config.MQTT_PORT # Broker Port.
 topic_base = config.EVA_TOPIC_BASE
 
 from paho.mqtt import client as mqtt_client
@@ -23,20 +23,17 @@ import face_recognition as fr
 
 from tensorflow.keras.layers import (Conv2D, Dense, Dropout, Flatten, MaxPooling2D)
 from tensorflow.keras.models import Sequential
-# from tensorflow.keras.layers import Dense, Dropout, Flatten
-# from tensorflow.keras.layers import Conv2D
-# from tensorflow.keras.layers import MaxPooling2D
 
 
 
-# Inicializa a câmera
+# Initialize the camera
 camera = PiCamera()
 
-# Tempo necessário para a camera inicializar
+# Time required for the camera to initialize
 time.sleep(0.1)
 print("The camera was initialized.")
 
-# input arg parsing
+# Input arg parsing
 parser = argparse.ArgumentParser()
 parser.add_argument('-f', '--fullscreen',
                     help='Display window in full screen', action='store_true')
@@ -49,7 +46,7 @@ args = parser.parse_args()
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
+    # Reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/userEmotion', 1), ])
     client.subscribe(topic=[(topic_base + '/userID', 1), ])
     client.subscribe(topic=[(topic_base + '/qrRead', 1), ])
@@ -63,11 +60,12 @@ def on_message(client, userdata, msg):
 # Face Expression Recognition Submodule ##############################################################
 ######################################################################################################
     if msg.topic == topic_base + '/userEmotion':
-        # Essa resolução apresentou bons resultados no processo de reconhecimento de expressões
+        # This resolution showed good results in the expression recognition process
         camera.resolution = (640, 480)
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(640, 480)) # 
         print("Capturing a facial expression.")
+        client.publish(topic_base + '/log', "Computer Vision: " + "Eva will try to identify the user emotion.") 
         stop_FER = False
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
@@ -86,22 +84,23 @@ def on_message(client, userdata, msg):
                 print(emotion_label)
                 cv2.putText(image, emotion_label, (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
                 client.publish(topic_base + "/var/dollar", emotion_label)
-                # Limpa o fluxo preparando para capturar o próximo frame.
+                client.publish(topic_base + '/log', "Inferred User Emotion: " + emotion_label)
+                # Clears the stream preparing to capture the next frame.
                 rawCapture.truncate(0)
                 stop_FER = True
                 break
             if stop_FER:
                 break
-            # Mostra a janela de captura do vídeo.
+            # Shows the video capture window.
             if args.video:
                 cv2.imshow("Frame", image)
 
                 key = cv2.waitKey(1) & 0xFF
 
-                # A tecla 'q' quebra o loop.
+                # The 'q' key breaks the loop.
                 if key == ord("q"):
                     break
-            # Limpa o fluxo preparando para capturar o próximo frame.
+            # Clears the stream preparing to capture the next frame.
             rawCapture.truncate(0)
         client.publish(topic_base + "/state", "FREE - (CV_FACIAL_EXPRESSION_RECOGNITION)")
 
@@ -110,13 +109,12 @@ def on_message(client, userdata, msg):
 # Face recognition Submodule ######################################################
 ###################################################################################
     elif msg.topic == topic_base + '/userID':
-        # Essa resolução apresentou bons resultados no processo de reconhecimento facial
-        user_recognized = False
+        # This resolution showed good results in the facial recognition process
         camera.resolution = (400, 400)
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(400, 400)) # 
+        client.publish(topic_base + '/log', "Computer Vision: " + "Eva will try to IDENTIFY the user.") 
         print("Capturing a face.")
-        stop_FR = False
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
             facecasc = cv2.CascadeClassifier('eva-cv-module/haarcascade_frontalface_default.xml')  
@@ -125,40 +123,26 @@ def on_message(client, userdata, msg):
             # ########################## Expression ##########################################
             for (x, y, w, h) in faces:
                 print("Encoding a face...")
-                #image = cv2.resize(image, (200, 200))
                 user_photo_encoded = fr.face_encodings(image)[0] # A numpy array
                 file_list = os.listdir('eva-cv-module/users')
+                id_usuario = "unknown"
+                min_distance = 100 # Long distance to initialize the variable
                 for file_name in file_list:
-                    if file_name.endswith(".npy"): # somente numpy arrays
-                        print("Comparing current user with: ", file_name)
+                    if file_name.endswith(".npy"): # Only numpy arrays
                         user_file_encoded = np.load('eva-cv-module/users/' + file_name)
-                        comparacao = fr.compare_faces([user_photo_encoded], user_file_encoded, 0.35)
-                        #distancia = fr.face_distance([user_photo_encoded], user_file_encoded)
-                        if comparacao[0] == True:
-                            user_recognized = True
-                            print("User identified: ", file_name)
-                            client.publish(topic_base + "/var/dollar", file_name.split('_')[0])
-                            break
-                # Limpa o fluxo preparando para capturar o próximo frame.
+                        distance = fr.face_distance([user_photo_encoded], user_file_encoded)
+                        print("Comparing current user with:", file_name, " Distance:", distance)
+                        if distance < min_distance:
+                            min_distance = distance
+                            id_usuario = file_name.split('_')[0]
                 rawCapture.truncate(0)
-                if user_recognized == False:
-                    print("The user could not be identified!")
-                    client.publish(topic_base + "/var/dollar", "unknown")
-                stop_FR = True
+                ########################################
+                if min_distance > 0.42: # An estimated value
+                    id_usuario = "unknown"
+                client.publish(topic_base + "/var/dollar", id_usuario)
+                client.publish(topic_base + '/log', "User ID: " + id_usuario) 
                 break
-            if stop_FR:
-                break
-            # Mostra a janela de captura do vídeo.
-            if args.video:
-                cv2.imshow("Frame", image)
-
-                key = cv2.waitKey(1) & 0xFF
-
-                # A tecla 'q' quebra o loop.
-                if key == ord("q"):
-                    break
-            # Limpa o fluxo preparando para capturar o próximo frame.
-            rawCapture.truncate(0)
+            break
         client.publish(topic_base + "/state", "FREE - (CV_FACE_RECOGNITION)")
 
 
@@ -167,39 +151,42 @@ def on_message(client, userdata, msg):
 # QR Code Reader Submodule ########################################################
 ###################################################################################
     elif msg.topic == topic_base + '/qrRead':
-        camera.resolution = (1920, 1080) # esta resulução apresentou melhoras no reconhecimento do QR
+        client.publish(topic_base + '/log', "Computer Vision: " + "Eva will try to read a QR Code.") 
+        camera.resolution = (1920, 1080) # This resolution showed improvements in QR recognition
         camera.framerate = 10
         rawCapture = PiRGBArray(camera)
         print("Trying to read a QR Code...")
-        qrCodeDetector = cv2.QRCodeDetector() # detector de QRCode
+        qrCodeDetector = cv2.QRCodeDetector() # QRCode detector
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             decodedText, points, _ = qrCodeDetector.detectAndDecode(gray)  
             if (decodedText != ""):
-                print(decodedText)
+                print("QR Code content: " + decodedText)
                 client.publish(topic_base + "/var/dollar", decodedText)
-                # Limpa o fluxo preparando para capturar o próximo frame.
+                # Clears the stream preparing to capture the next frame.
                 rawCapture.truncate(0)
+                client.publish(topic_base + '/log', "QR Code content: " + decodedText)
                 break
             else:
-                pass
+                print("A empty string was read...")
+                client.publish(topic_base + "/log", "A EMPTY string was read...")
             
-            # Mostra a janela de captura do vídeo.
+            # Shows the video capture window.
             if args.video:
                 cv2.imshow("Frame", gray)
 
                 key = cv2.waitKey(1) & 0xFF
 
-                # A tecla 'q' quebra o loop.
+                # The 'q' key breaks the loop.
                 if key == ord("q"):
                     break
-            # Limpa o fluxo preparando para capturar o próximo frame.
+            # Clears the stream preparing to capture the next frame.
             rawCapture.truncate(0)
         client.publish(topic_base + "/state", "FREE - (CV_QR_CODE)")
 
 
-# Cria as 7 camadas para o modelo.
+# Creates the 7 layers for the model.
 model = Sequential()
 
 model.add(Conv2D(32, kernel_size=(3, 3),
@@ -219,14 +206,14 @@ model.add(Dense(1024, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(7, activation='softmax'))
 
-# Carrega o modelo com seus pesos.
+# Load the model with its weights.
 model.load_weights('eva-cv-module/model.h5')
 
-# Associa as classes aos seus nomes
-emotion_dict = {0: "ANGRY", 1: "DISGUST", 2: "FEARFUL", 3: "HAPPY", 4: "NEUTRAL", 5: "SAD", 6: "SUSPRISED"}
+# Associate classes with their names
+emotion_dict = {0: "ANGRY", 1: "DISGUST", 2: "FEAR", 3: "HAPPY", 4: "NEUTRAL", 5: "SAD", 6: "SURPRISE"}
 
 
-# Executa a thread do cliente MQTT.
+# Run the MQTT client thread.
 client = mqtt_client.Client()
 client.on_connect = on_connect
 client.on_message = on_message
