@@ -10,5 +10,5 @@ This module is responsible for transforming texts (strings) into speech (audio f
 ## Module Dependencies
 
 * **Paho-Mqtt 1.6.1** (It can be installed using pip)
-* *IBM-Watson* (It can be installed using pip)
+* ***IBM-Watson*** (It can be installed using pip)
 
