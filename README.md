@@ -39,7 +39,7 @@ As presented, the robot system is made up of several modules, each one being res
 ** To run the web application, go to the EVA_ROBOT folder and run the script:
 
 `
-robot-launch.sh
+./robot-launch.sh
 `
 
 ** This file activates the Python virtual environment where all libraries were installed.
