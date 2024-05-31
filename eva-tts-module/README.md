@@ -1,4 +1,4 @@
-# Proposal for a new Software Architecture, extension of non-verbal communication capabilities, new 3D models and new version of the Simulator (EvaSIM) for the EVA robot, with the update and addition of new elements to the EvaML programming language #
+# Text-To-Speech Module #
 
 
 In its initial (original) version, the EVA software architecture consisted of an application, developed in *NodeJS*, which provides a control interface through a Web application. This application basically contained a control interface for the robot elements (model WoZ) is a graphical tool for developing and executing scripts using a *Visual Programming Language* (VPL). For a new element, a new functionality, to be added as a first-class element to the EVA programming language, it was necessary to directly edit several source code files. The original proposal for the robot system did not offer a mechanism, an architecture, that would facilitate the addition of new functionalities, new sensors or actuators to the robot system.
@@ -11,15 +11,10 @@ With the aim of allowing the extension of the robot's functionalities, facilitat
 ![alt text](img-arch1.png)
 **Figure 1.** Control module responsible for representing the robot's emotions through its display. The module integrates into the system as an MQTT client that subscribes to the *EVA/display* topic.
 
-**Figure 2** shows an overview of the new EVA software architecture with all the modules responsible for its functionalities. All modules run inside the Raspberry Pi 4.
-
-![alt text](eva-arch-rasp.png)
-**Figure 2.** Overview of the new EVA software architecture.
-
 ## 1.2 Management of Control Modules (WebApp)
-As presented, the robot system is made up of several modules, each one being responsible for a robot functionality, such as: controlling head movement, presenting expressions on the LCD display, controlling the smart lamp, etc. To have the robot system fully functioning, it is necessary to execute each of its modules in independent processes. To facilitate the process of executing and closing all modules at once, as well as individually, this work presents a small and lightweight Web application developed in Python using Flask. The application, which runs on Raspberry IP address and port 5000, provides an interface with buttons that allow you to start and stop the EVA control modules from any device that is connected to your network, such as a smart phone, for example. **Figure 3** shows the web application interface running on a smartphone.
+As presented, the robot system is made up of several modules, each one being responsible for a robot functionality, such as: controlling head movement, presenting expressions on the LCD display, controlling the smart lamp, etc. To have the robot system fully functioning, it is necessary to execute each of its modules in independent processes. To facilitate the process of executing and closing all modules at once, as well as individually, this work presents a small and lightweight Web application developed in Python using Flask. The application, which runs on Raspberry IP address and port 5000, provides an interface with buttons that allow you to start and stop the EVA control modules from any device that is connected to your network, such as a smart phone, for example. **Figure 2** shows the web application interface running on a smartphone.
 
 ![alt text](img-eva-web-app.png)
-**Figure 3.** Graphical user interface of the Web application for managing EVA robot modules running on a smartphone.
+**Figure 2.** Graphical user interface of the Web application for managing EVA robot modules running on a smartphone.
 
 
