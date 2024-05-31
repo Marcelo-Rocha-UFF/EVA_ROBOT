@@ -4,6 +4,5 @@ This module is responsible for transforming the voice audio, captured by *Matrix
 
 ## Module Dependencies
 
-* *IBM-Watson* (Can be installed using pip)
 * sudo apt install flac
 
