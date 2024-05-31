@@ -1,9 +1,7 @@
 # Proposal for a new Software Architecture, extension of non-verbal communication capabilities, new 3D models and new version of the Simulator (EvaSIM) for the EVA robot, with the update and addition of new elements to the EvaML programming language #
 
-<div class="center">
-![alt text](img-eva-new-version.png)
-</div>
 
+![alt text](img-eva-new.png)
 
 In its initial (original) version, the EVA software architecture consisted of an application, developed in *NodeJS*, which provides a control interface through a Web application. This application basically contained a control interface for the robot elements (model WoZ) is a graphical tool for developing and executing scripts using a *Visual Programming Language* (VPL). For a new element, a new functionality, to be added as a first-class element to the EVA programming language, it was necessary to directly edit several source code files. The original proposal for the robot system did not offer a mechanism, an architecture, that would facilitate the addition of new functionalities, new sensors or actuators to the robot system.
 
