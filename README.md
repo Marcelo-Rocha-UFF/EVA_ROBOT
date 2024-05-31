@@ -14,6 +14,8 @@ With the aim of allowing the extension of the robot's functionalities, facilitat
 <strong>Figure 1.</strong> Control module responsible for representing the robot's emotions through its display. The module integrates into the system as an MQTT client that subscribes to the <em>EVA/display</em> topic.
 </div>
 
+</br></br>
+
 The following image (**Figure 2**) shows an overview of the new EVA software architecture with all the modules responsible for its functionalities. All modules run inside the Raspberry Pi 4.
 
 ![alt text](eva-arch-rasp.png)
