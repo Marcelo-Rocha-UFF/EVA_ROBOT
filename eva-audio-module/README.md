@@ -1,6 +1,4 @@
-# Display Module #
-
-## 1. Extension of the EVA Robot's Non-Verbal Communication Capabilities (New Facial Expressions)
+# EVA Display Module #
 
 The EVA robot, in its original version, can express 4 emotions through its gaze using its display. These expressions are drawn using only the eyes as elements of the face. To draw these expressions, on the EVA screen, an animation made in the *Unity* software is used, which runs using a plugin within a Web browser and which is accessed through a local Web server. This approach has some limitations:
 
@@ -13,6 +11,8 @@ The EVA robot, in its original version, can express 4 emotions through its gaze 
 <strong>Figure 1.</strong> The four expressions available in the first version of the EVA robot.
 </p>
 </br>
+
+## 1. Extension of the EVA Robot's Non-Verbal Communication Capabilities (New Facial Expressions)
 
 With the aim of improving the EVA open-source robotics platform, overcoming some of the aforementioned limitations, this work proposes an increase in the number of facial expressions of the robot using a lighter and simpler to install software structure. In this new version, the robot's display uses just one window, built using the Python *Tkinter* library, and the expression animation images are stored in a single animated GIF file. As previously mentioned, the only graphic elements used to create the robot's expressions, in its initial version, were the eyes, making it difficult, from an artistic point of view, to represent other expressions that depend on other elements of the face.
 
