@@ -2,5 +2,5 @@ venv/
 __pycache__/
 
 eva-tts-module/ibm_cred.txt
-eva-tts-module/tts_cache_files/*.mp3
+
 
