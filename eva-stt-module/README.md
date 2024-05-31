@@ -5,5 +5,5 @@ This module is responsible for transforming the voice audio, captured by *Matrix
 ## Module Dependencies
 
 * **Paho-Mqtt 1.6.1** (It can be installed using pip)
-* sudo apt install flac
+* **sudo apt install flac**
 

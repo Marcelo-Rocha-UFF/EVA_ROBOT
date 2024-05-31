@@ -32,4 +32,17 @@ As presented, the robot system is made up of several modules, each one being res
 <strong>Figure 3.</strong> Graphical user interface of the <strong>Web Application</strong> for managing EVA robot modules running on a smartphone.
 </div>
 
+</br></br>
+**The EVA web application depends on the Flask Python module.**
+
+</br></br>
+** To run the web application, go to the EVA_ROBOT folder and run the script:
+
+`
+robot-launch.sh
+`
+
+** This file activates the Python virtual environment where all libraries were installed.
+
+** By default, the virtual environment was created within the **EVA_ROBOT** folder with the name ***venv***.
 
