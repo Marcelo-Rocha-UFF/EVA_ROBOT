@@ -10,3 +10,8 @@ With the aim of allowing the extension of the robot's functionalities, facilitat
 
 ![alt text](img-arch1.png)
 **Figure 1.** Control module responsible for representing the robot's emotions through its display. The module integrates into the system as an MQTT client that subscribes to the *EVA/display* topic.
+
+## 1.2 Management of Control Modules (WebApp)
+As presented, the robot system is made up of several modules, each one being responsible for a robot functionality, such as: controlling head movement, presenting expressions on the LCD display, controlling the smart lamp, etc. To have the robot system fully functioning, it is necessary to execute each of its modules in independent processes. To facilitate the process of executing and closing all modules at once, as well as individually, this work presents a small and lightweight Web application developed in Python using Flask. The application, which runs on Raspberry IP address and port 5000, provides an interface with buttons that allow you to start and stop the EVA control modules from any device that is connected to your network, such as a smart phone, for example. **Figure 2** shows the web application interface running on a smartphone.
+
+![alt text](img-eva-web-app.png)
