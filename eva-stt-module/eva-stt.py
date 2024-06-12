@@ -49,7 +49,8 @@ def on_message(client, userdata, msg):
             try:
                 # Recognizes speech using Google Speech Recognition.
                 # *** Nora, I think there is an option to use Whisper instead of Google *** 
-                response = r.recognize_google(audio, language="pt-BR")
+                # language options "pt-BR", "en-US"
+                response = r.recognize_google(audio, language="en-US")
                 print("Google Speech Recognition guess you said: " + response)
                 client.publish(topic_base + "/var/dollar", response)
                 client.publish(topic_base + "/log", "Google Speech Recognition guess you said: " + response)

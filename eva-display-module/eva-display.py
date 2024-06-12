@@ -308,16 +308,16 @@ lbl.load("eva-display-module/eva-expressions.gif")
 root.bind('<Key>', lbl.key_press)
 
 
-# Opening of EVA (Can be commented)
-from vlc import *
-media_player = MediaPlayer()
-media = Media("eva-abertura-logo.mp4")
-media_player.set_media(media)
-media_player.toggle_fullscreen()
-media_player.play()
-time.sleep(0.1) # Time to start the video using VLC
-while media_player.is_playing():
-            time.sleep(.1)
+# # Opening of EVA (Can be commented)
+# from vlc import *
+# media_player = MediaPlayer()
+# media = Media("eva-abertura-logo.mp4")
+# media_player.set_media(media)
+# media_player.toggle_fullscreen()
+# media_player.play()
+# time.sleep(0.1) # Time to start the video using VLC
+# while media_player.is_playing():
+#             time.sleep(.1)
 
 
 

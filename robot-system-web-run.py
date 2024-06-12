@@ -7,6 +7,7 @@ import time
 # Variables for module processes.
 cv_process = None
 tts_process = None
+tte_process = None
 leds_process = None
 light_process = None
 audio_process = None
@@ -40,6 +41,20 @@ def eva_tts_module():
         print("Running TTS module")
         tts_process = subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
     elif 'btn_kill_tts_module' in request.form:
+        if tts_process is not None: # The process has not yet been initialized.
+            tts_process.terminate()
+            time.sleep(0.5)
+            tts_process.poll()
+    return render_template("index.html")
+
+
+@app.route("/eva_tte_module", methods=["POST"])
+def eva_tte_module():
+    global tte_process
+    if 'btn_run_tte_module' in request.form:
+        print("Running TTE module")
+        tts_process = subprocess.Popen(["python3", "eva-tte-module/eva-tte.py"])
+    elif 'btn_kill_tte_module' in request.form:
         if tts_process is not None: # The process has not yet been initialized.
             tts_process.terminate()
             time.sleep(0.5)
@@ -137,6 +152,7 @@ def eva_all_modules():
     if 'btn_run_all_modules' in request.form:
         cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py"])
         tts_process = subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
+        tte_process = subprocess.Popen(["python3", "eva-tte-module/eva-tte.py"])
         leds_process = subprocess.Popen(["python3", "eva-leds-module/eva-leds.py"])
         light_process = subprocess.Popen(["python3", "eva-light-module/eva-light.py"])
         audio_process = subprocess.Popen(["python3", "eva-audio-module/eva-audio.py"])
@@ -149,6 +165,7 @@ def eva_all_modules():
         print("Matando todos os módulos.")
         if cv_process is not None: cv_process.terminate()
         if tts_process is not None: tts_process.terminate()
+        if tte_process is not None: tts_process.terminate()
         if leds_process is not None: leds_process.terminate()
         if light_process is not None: light_process.terminate()
         if audio_process is not None: audio_process.terminate()
@@ -158,6 +175,7 @@ def eva_all_modules():
         time.sleep(0.5)
         if cv_process is not None: cv_process.poll()
         if tts_process is not None: tts_process.poll()
+        if tte_process is not None: tte_process.poll()
         if leds_process is not None: leds_process.poll()
         if light_process is not None: light_process.poll()
         if audio_process is not None: audio_process.poll()

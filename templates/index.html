@@ -7,7 +7,8 @@
 </head>
 <body>
     <div align="center">
-        <img style="width: 90%" src="{{ url_for('static', filename= 'images/eva-logo.png') }}" />
+        </br>
+        <img style="width: 60%" src="{{ url_for('static', filename= 'images/eva-logo.png') }}" />
     </div>
     </br></br></br>
     <div>
@@ -16,7 +17,6 @@
             <button style="--clr:#FF0000; margin:9px; width:450px; height:200px; font-weight: bold;" name="btn_kill_all_modules"><span>KILL ALL Modules</span><i></i></button>
         </form>
     </div>
-    </br>
     <div>
         <form action="/eva_cv_module" method="POST">
           <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_cv_module"><span>Run Computer Vision Module</span><i></i></button>
@@ -42,6 +42,10 @@
             <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_tts_module"><span>Run TTS Module</span><i></i></button> 
             <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_tts_module"><span>KILL TTS Module</span><i></i></button>
         </form>
+        <form action="/eva_tte_module" method="POST">
+          <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_tte_module"><span>Run TTE Module</span><i></i></button>
+          <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_tte_module"><span>KILL TTE Module</span><i></i></button>
+        </form>
         <form action="/eva_stt_module" method="POST">
             <button style="--clr:#3b9efe; margin:9px; width:450px; height:100px;" name="btn_run_stt_module"><span>Run STT Module</span><i></i></button>
             <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_stt_module"><span>KILL STT Module</span><i></i></button>
@@ -51,9 +55,9 @@
           <button style="--clr:#FF0000; margin:9px; width:450px; height:100px;" name="btn_kill_display_module"><span>KILL Display Module</span><i></i></button>
         </form>
       </div>
-    </br></br></br></br>
+    </br></br></br>
       <div align="center">
-        <img style="width: 90%" src="{{ url_for('static', filename= 'images/logos.png') }}" />
+        <img style="width: 70%" src="{{ url_for('static', filename= 'images/logos.png') }}" />
     </div>
 </body>
 </html>
