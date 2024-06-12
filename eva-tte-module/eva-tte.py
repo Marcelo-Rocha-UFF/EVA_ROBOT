@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
         print("Using the LLM model to extract emotion from text.")
         emotion = str(classifier(msg.payload.decode())[0][0]["label"])
         # mapping emotions to defalt names
-        remap_emotions = {
+        remaping_emotions = {
             "joy" : "HAPPY",
             "sadness" : "SAD",
             "fear" : "FEAR",
@@ -41,7 +41,7 @@ def on_message(client, userdata, msg):
             "surprise" : "SURPRISE",
             "anger" : "ANGRY"
         }
-        emotion = remap_emotions[emotion]
+        emotion = remaping_emotions[emotion]
         print("The LLM model guess that emotion from text is: " + emotion)
         client.publish(topic_base + "/var/dollar", emotion)
         client.publish(topic_base + "/state", "FREE_TEXT_EMOTION")
