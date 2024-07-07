@@ -25,7 +25,7 @@ def on_connect(client, userdata, flags, rc):
     # Subscribing in on_connect() means that if we lose the connection and
     # Reconnect then subscriptions will be renewed.
     client.subscribe(topic=[(topic_base + '/textEmotion', 1), ])
-    print("Text-To-Emotion Module - Connected.")
+    print("Text-Emotion-Recognition Module - Connected.")
 
 
 # The callback for when a PUBLISH message is received from the server.

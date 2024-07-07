@@ -7,7 +7,7 @@ import time
 # Variables for module processes.
 cv_process = None
 tts_process = None
-tte_process = None
+ter_process = None
 leds_process = None
 light_process = None
 audio_process = None
@@ -48,17 +48,17 @@ def eva_tts_module():
     return render_template("index.html")
 
 
-@app.route("/eva_tte_module", methods=["POST"])
-def eva_tte_module():
-    global tte_process
-    if 'btn_run_tte_module' in request.form:
-        print("Running TTE module")
-        tts_process = subprocess.Popen(["python3", "eva-tte-module/eva-tte.py"])
-    elif 'btn_kill_tte_module' in request.form:
-        if tts_process is not None: # The process has not yet been initialized.
-            tts_process.terminate()
+@app.route("/eva_ter_module", methods=["POST"])
+def eva_ter_module():
+    global ter_process
+    if 'btn_run_ter_module' in request.form:
+        print("Running TER module")
+        ter_process = subprocess.Popen(["/home/pi/EVA_ROBOT/eva-ter-module/venv/bin/python3", "eva-ter-module/eva-ter.py"]) # run from the ter-module venv
+    elif 'btn_kill_ter_module' in request.form:
+        if ter_process is not None: # The process has not yet been initialized.
+            ter_process.terminate()
             time.sleep(0.5)
-            tts_process.poll()
+            ter_process.poll()
     return render_template("index.html")
 
 
@@ -145,27 +145,28 @@ def eva_display_module():
             display_process.poll()
     return render_template("index.html")
 
+
 # Running or "Killing" all processes.
 @app.route("/eva_all_modules", methods=["POST"])
 def eva_all_modules():
-    global cv_process, tts_process, leds_process, light_process, audio_process, motion_process, stt_process, display_process
+    global cv_process, tts_process, ter_process, leds_process, light_process, audio_process, motion_process, stt_process, display_process
     if 'btn_run_all_modules' in request.form:
         cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py"])
         tts_process = subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
-        tte_process = subprocess.Popen(["python3", "eva-tte-module/eva-tte.py"])
+        ter_process = subprocess.Popen(["/home/pi/EVA_ROBOT/eva-ter-module/venv/bin/python3", "eva-ter-module/eva-ter.py"]) # run from the ter-module venv
         leds_process = subprocess.Popen(["python3", "eva-leds-module/eva-leds.py"])
         light_process = subprocess.Popen(["python3", "eva-light-module/eva-light.py"])
         audio_process = subprocess.Popen(["python3", "eva-audio-module/eva-audio.py"])
         motion_process = subprocess.Popen(["python3", "eva-motion-module/eva-motion.py"])
         stt_process = subprocess.Popen(["python3", "eva-stt-module/eva-stt.py"])
         display_process = subprocess.Popen(["python3", "eva-display-module/eva-display.py"])
-        print("Executando todos os módulos.")
+        print("Runing all modules.")
 
     if 'btn_kill_all_modules' in request.form:
-        print("Matando todos os módulos.")
+        print("Killing all modules.")
         if cv_process is not None: cv_process.terminate()
         if tts_process is not None: tts_process.terminate()
-        if tte_process is not None: tts_process.terminate()
+        if ter_process is not None: ter_process.terminate()
         if leds_process is not None: leds_process.terminate()
         if light_process is not None: light_process.terminate()
         if audio_process is not None: audio_process.terminate()
@@ -175,7 +176,7 @@ def eva_all_modules():
         time.sleep(0.5)
         if cv_process is not None: cv_process.poll()
         if tts_process is not None: tts_process.poll()
-        if tte_process is not None: tte_process.poll()
+        if ter_process is not None: ter_process.poll()
         if leds_process is not None: leds_process.poll()
         if light_process is not None: light_process.poll()
         if audio_process is not None: audio_process.poll()
@@ -184,6 +185,7 @@ def eva_all_modules():
         if display_process is not None: display_process.poll()
         os.system("pkill -f eva")
     return render_template("index.html")
+
 
 # Start the web application.
 app.run(host="0.0.0.0", debug = True) 
