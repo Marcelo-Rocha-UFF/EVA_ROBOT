@@ -9,4 +9,5 @@ export DISPLAY=:0.0
 # Run the Web application that allows you to run and "kill" the EVA modules.
 # The application can be accessed via the Raspberry IP, on port 5000.
 
+
 python3 /home/pi/EVA_ROBOT/robot-system-web-run.py

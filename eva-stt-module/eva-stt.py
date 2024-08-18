@@ -50,7 +50,7 @@ def on_message(client, userdata, msg):
                 # Recognizes speech using Google Speech Recognition.
                 # *** Nora, I think there is an option to use Whisper instead of Google *** 
                 # language options "pt-BR", "en-US"
-                response = r.recognize_google(audio, language="en-US")
+                response = r.recognize_google(audio, language="pt-BR") # language="en-US" ou "pt-BR"
                 print("Google Speech Recognition guess you said: " + response)
                 client.publish(topic_base + "/var/dollar", response)
                 client.publish(topic_base + "/log", "Google Speech Recognition guess you said: " + response)

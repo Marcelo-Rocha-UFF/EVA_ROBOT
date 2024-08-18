@@ -53,7 +53,7 @@ def eva_ter_module():
     global ter_process
     if 'btn_run_ter_module' in request.form:
         print("Running TER module")
-        ter_process = subprocess.Popen(["/home/pi/EVA_ROBOT/eva-ter-module/venv/bin/python3", "eva-ter-module/eva-ter.py"]) # run from the ter-module venv
+        ter_process = subprocess.Popen(["/usr/bin/python", "eva-ter-module/eva-ter.py"]) # all libraries from this module are in global python dir (I dont know why...).
     elif 'btn_kill_ter_module' in request.form:
         if ter_process is not None: # The process has not yet been initialized.
             ter_process.terminate()
@@ -153,7 +153,7 @@ def eva_all_modules():
     if 'btn_run_all_modules' in request.form:
         cv_process = subprocess.Popen(["python3", "eva-cv-module/eva-cv.py"])
         tts_process = subprocess.Popen(["python3", "eva-tts-module/eva-tts.py"])
-        ter_process = subprocess.Popen(["/home/pi/EVA_ROBOT/eva-ter-module/venv/bin/python3", "eva-ter-module/eva-ter.py"]) # run from the ter-module venv
+        ter_process = subprocess.Popen(["/usr/bin/python", "eva-ter-module/eva-ter.py"]) # all libraries from this module are in global python dir (I dont know why...).
         leds_process = subprocess.Popen(["python3", "eva-leds-module/eva-leds.py"])
         light_process = subprocess.Popen(["python3", "eva-light-module/eva-light.py"])
         audio_process = subprocess.Popen(["python3", "eva-audio-module/eva-audio.py"])

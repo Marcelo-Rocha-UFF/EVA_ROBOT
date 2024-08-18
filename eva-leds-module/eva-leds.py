@@ -36,6 +36,8 @@ def on_message(client, userdata, msg):
             p = subprocess.Popen("eva-leds-module/leds-animation/angry", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "ANGRY2":
             p = subprocess.Popen("eva-leds-module/leds-animation/angry2", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
+        elif msg.payload.decode() == "INLOVE":
+            p = subprocess.Popen("eva-leds-module/leds-animation/angry", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "HAPPY":
             p = subprocess.Popen("eva-leds-module/leds-animation/happy", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "LISTEN":
@@ -46,9 +48,13 @@ def on_message(client, userdata, msg):
             p = subprocess.Popen("eva-leds-module/leds-animation/rainbow", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "SAD":
             p = subprocess.Popen("eva-leds-module/leds-animation/sad", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
+        elif msg.payload.decode() == "FEAR":
+            p = subprocess.Popen("eva-leds-module/leds-animation/sad", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "SAD2":
             p = subprocess.call("eva-leds-module/leds-animation/sad2", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "SURPRISE":
+            p = subprocess.Popen("eva-leds-module/leds-animation/surprise", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
+        elif msg.payload.decode() == "DISGUST":
             p = subprocess.Popen("eva-leds-module/leds-animation/surprise", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "SPEAK":
             p = subprocess.Popen("eva-leds-module/leds-animation/speak", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)

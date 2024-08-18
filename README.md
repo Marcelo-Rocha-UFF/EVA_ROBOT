@@ -33,6 +33,7 @@ As presented, the robot system is made up of several modules, each one being res
 </div>
 
 </br></br>
+
 **The EVA web application depends on the Flask Python module.**
 
 </br></br>
