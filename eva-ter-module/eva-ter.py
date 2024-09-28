@@ -1,4 +1,6 @@
-#!/home/pi/EVA_ROBOT/eva-tte-module/venv/bin/python3
+# Software developed by Marcelo Marques da Rocha
+# MidiaCom Laboratory - Universidade Federal Fluminense
+# This work was funded by CAPES and Google Research
 
 from deep_translator import GoogleTranslator
 from paho.mqtt import client as mqtt_client
@@ -34,8 +36,7 @@ def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/textEmotion':
         msg.payload = msg.payload.decode()
         source_lang = msg.payload.split("|")[0].lower()
-        print("Source lang", source_lang)
-        if source_lang != 'en': # It will translate
+        if source_lang != 'en': # It will be translated
             tradutor = GoogleTranslator(source=source_lang, target='en') # The target will be always 'en' because this is the language of the model.
             texto = (msg.payload).split("|")[1] # This is the text to translate.
             print("Translating from '" + source_lang + "' to 'en' (english).")

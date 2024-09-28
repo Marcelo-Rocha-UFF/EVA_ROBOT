@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+# Software developed by Marcelo Marques da Rocha
+# MidiaCom Laboratory - Universidade Federal Fluminense
+# This work was funded by CAPES and Google Research
 
 from paho.mqtt import client as mqtt_client
 
@@ -45,12 +47,12 @@ def on_message(client, userdata, msg):
         with mic as source:
             print("EVA is listening!")
             audio = r.listen(source)
-            print("The audio was recorded!")
+            print("The audio was recorded and it will send to the cloud!")
+            language_defined_by_user = msg.payload.decode()
             try:
                 # Recognizes speech using Google Speech Recognition.
-                # *** Nora, I think there is an option to use Whisper instead of Google *** 
-                # language options "pt-BR", "en-US"
-                response = r.recognize_google(audio, language="pt-BR") # language="en-US" ou "pt-BR"
+                # language options defined in EvaML Schema ("pt-BR", "en-US", "es-ES")
+                response = r.recognize_google(audio, language = language_defined_by_user)
                 print("Google Speech Recognition guess you said: " + response)
                 client.publish(topic_base + "/var/dollar", response)
                 client.publish(topic_base + "/log", "Google Speech Recognition guess you said: " + response)

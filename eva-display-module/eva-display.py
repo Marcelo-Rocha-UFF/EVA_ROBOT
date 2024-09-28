@@ -1,6 +1,6 @@
-# There is a small bug in this module.
-# Every now and then, an expression command causes the robot to go through all the expressions until it reaches the target expression.
-# This must be some small detail in the logic that deals with the states of expressions.
+# Software developed by Marcelo Marques da Rocha
+# MidiaCom Laboratory - Universidade Federal Fluminense
+# This work was funded by CAPES and Google Research
 
 from paho.mqtt import client as mqtt_client
 
@@ -63,12 +63,12 @@ class ImageLabel(tk.Label):
                 self.targetstate = "blink"
                 self.interval_pisca = random.randint(0,8)
 
-        if self.currentstate != self.targetstate:
+        elif self.currentstate != self.targetstate:
 
             if self.currentstate == "null":
                 self.currentstate = "neutral"
 
-            if self.currentstate == "neutral": # State changes starting from "neutral".
+            elif self.currentstate == "neutral": # State changes starting from "neutral".
                 if self.targetstate == "blink":
                     if self.stopped:
                         self.frame = 1 # Initial frame of the animation.
@@ -83,7 +83,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
                 
-                if self.targetstate == "inlove":
+                elif self.targetstate == "inlove":
                     if self.stopped:
                         self.frame = 27 # Initial frame of the animation.
                         self.stopped = False
@@ -96,7 +96,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "disgust":
+                elif self.targetstate == "disgust":
                     if self.stopped:
                         self.frame = 23 # Initial frame of the animation.
                         self.stopped = False
@@ -109,7 +109,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "surprise":
+                elif self.targetstate == "surprise":
                     if self.stopped:
                         self.frame = 19 # Initial frame of the animation.
                         self.stopped = False
@@ -122,7 +122,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "fear":
+                elif self.targetstate == "fear":
                     if self.stopped:
                         self.frame = 15 # Initial frame of the animation.
                         self.stopped = False
@@ -135,7 +135,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "happy":
+                elif self.targetstate == "happy":
                     if self.stopped:
                         self.frame = 11 # Initial frame of the animation.
                         self.stopped = False
@@ -148,7 +148,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "sad":
+                elif self.targetstate == "sad":
                     if self.stopped:
                         self.frame = 7 # Initial frame of the animation.
                         self.stopped = False
@@ -161,7 +161,7 @@ class ImageLabel(tk.Label):
                             self.config(image=self.frames[self.frame])
                             self.frame += 1
 
-                if self.targetstate == "angry":
+                elif self.targetstate == "angry":
                     if self.stopped:
                         self.frame = 3 # Initial frame of the animation.
                         self.stopped = False

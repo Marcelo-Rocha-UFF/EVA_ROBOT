@@ -1,5 +1,10 @@
+# Software developed by Marcelo Marques da Rocha
+# MidiaCom Laboratory - Universidade Federal Fluminense
+# This work was funded by CAPES and Google Research
+
 # From time to time, it appears that the lamp disconnects and does not respond to a command, failing...
 # Just responding to the following command...
+# It seems to me that it is a problem with the lamp and not this software...
 
 import socket
 from paho.mqtt import client as mqtt_client

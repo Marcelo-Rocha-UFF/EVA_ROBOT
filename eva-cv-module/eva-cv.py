@@ -1,3 +1,11 @@
+# Software developed by Marcelo Marques da Rocha
+# MidiaCom Laboratory - Universidade Federal Fluminense
+# This work was funded by CAPES and Google Research
+
+# There is a small problem that occurs infrequently,
+# usually when the QR Code reading module is used for the first time.
+# It seems to have something to do with resizing the image for use by OpenCV.
+
 import argparse
 
 import time
