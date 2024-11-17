@@ -58,8 +58,7 @@ def on_message(client, userdata, msg):
         }
         emotion = remaping_emotions[emotion]
         print("The LLM model guess that emotion from text is: " + emotion)
-        client.publish(topic_base + "/var/dollar", emotion)
-        client.publish(topic_base + "/state", "FREE_TEXT_EMOTION")
+        client.publish(topic_base + "/var/dollar", emotion) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
 
 
 

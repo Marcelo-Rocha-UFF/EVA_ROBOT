@@ -91,8 +91,8 @@ def on_message(client, userdata, msg):
                 emotion_label = emotion_dict[maxindex]
                 print(emotion_label)
                 cv2.putText(image, emotion_label, (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-                client.publish(topic_base + "/var/dollar", emotion_label)
                 client.publish(topic_base + '/log', "Inferred User Emotion: " + emotion_label)
+                client.publish(topic_base + "/var/dollar", emotion_label) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
                 # Clears the stream preparing to capture the next frame.
                 rawCapture.truncate(0)
                 stop_FER = True
@@ -110,7 +110,6 @@ def on_message(client, userdata, msg):
                     break
             # Clears the stream preparing to capture the next frame.
             rawCapture.truncate(0)
-        client.publish(topic_base + "/state", "FREE - (CV_FACIAL_EXPRESSION_RECOGNITION)")
 
 
 ###################################################################################
@@ -147,11 +146,10 @@ def on_message(client, userdata, msg):
                 ########################################
                 if min_distance > 0.42: # An estimated value
                     id_usuario = "unknown"
-                client.publish(topic_base + "/var/dollar", id_usuario)
-                client.publish(topic_base + '/log', "User ID: " + id_usuario) 
+                client.publish(topic_base + '/log', "User ID: " + id_usuario)
+                client.publish(topic_base + "/var/dollar", id_usuario) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
                 break
             break
-        client.publish(topic_base + "/state", "FREE - (CV_FACE_RECOGNITION)")
 
 
 
@@ -168,30 +166,34 @@ def on_message(client, userdata, msg):
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            decodedText, points, _ = qrCodeDetector.detectAndDecode(gray)  
-            if (decodedText != ""):
-                print("QR Code content: " + decodedText)
-                client.publish(topic_base + "/var/dollar", decodedText)
+            try: # It was necessary to protect this code block, because it was broking with an error related to a bad image size when capturing the QR code
+                decodedText, points, _ = qrCodeDetector.detectAndDecode(gray)  
+                if (decodedText != ""):
+                    print("QR Code content: " + decodedText)
+                    client.publish(topic_base + '/log', "QR Code content: " + decodedText)
+                    client.publish(topic_base + "/var/dollar", decodedText) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
+                    # Clears the stream preparing to capture the next frame.
+                    rawCapture.truncate(0)
+                    break
+                else:
+                    print("A empty string was read...")
+                    client.publish(topic_base + "/log", "A EMPTY string was read...")
+                
+                # Shows the video capture window.
+                if args.video:
+                    cv2.imshow("Frame", gray)
+
+                    key = cv2.waitKey(1) & 0xFF
+
+                    # The 'q' key breaks the loop.
+                    if key == ord("q"):
+                        break
                 # Clears the stream preparing to capture the next frame.
                 rawCapture.truncate(0)
-                client.publish(topic_base + '/log', "QR Code content: " + decodedText)
-                break
-            else:
-                print("A empty string was read...")
-                client.publish(topic_base + "/log", "A EMPTY string was read...")
-            
-            # Shows the video capture window.
-            if args.video:
-                cv2.imshow("Frame", gray)
-
-                key = cv2.waitKey(1) & 0xFF
-
-                # The 'q' key breaks the loop.
-                if key == ord("q"):
-                    break
-            # Clears the stream preparing to capture the next frame.
-            rawCapture.truncate(0)
-        client.publish(topic_base + "/state", "FREE - (CV_QR_CODE)")
+            except:
+                print("There was a problem during the QR Code reading process. We will try again!")
+                # Clears the stream preparing to capture the next frame.
+                rawCapture.truncate(0)
 
 
 # Creates the 7 layers for the model.
