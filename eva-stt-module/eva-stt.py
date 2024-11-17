@@ -19,8 +19,8 @@ topic_base = config.EVA_TOPIC_BASE
 # Audio will come from the microphone.
 r = sr.Recognizer()
 
-for index, name in enumerate(sr.Microphone.list_microphone_names()):
-    print(f'{index}, {name}')
+# for index, name in enumerate(sr.Microphone.list_microphone_names()):
+#     print(f'{index}, {name}')
 
 # The Matrix Voice is the default.
 mic = sr.Microphone(chunk_size = 64) # The smaller chunk_size helps capture smaller words. The default is 1024, but it fails for "yes", "no", "suzy"
@@ -58,8 +58,11 @@ def on_message(client, userdata, msg):
                 client.publish(topic_base + "/var/dollar", response) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock
             except sr.UnknownValueError:
                 print("Google Speech Recognition could not understand your audio...")
+                client.publish(topic_base + "/abort", "Google Speech Recognition could not understand your audio...")
+
             except sr.RequestError as e:
                 print("Unable to request the results from Google Speech Recognition: {0}".format(e))
+                client.publish(topic_base + "/abort", "Unable to request the results from Google Speech Recognition: {0}".format(e))
             
 
 
