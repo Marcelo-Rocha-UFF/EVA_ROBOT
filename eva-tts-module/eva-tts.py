@@ -117,9 +117,9 @@ def on_message(client, userdata, msg):
                                 os.remove("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)
                             else:
                                 tts_ending = time.time()
-                                client.publish(topic_base + "/log", "The audio was generated correctly in (s): %.2f" % (tts_ending - tts_start))
+                                client.publish(topic_base + "/syslog", "The audio was generated correctly in (s): %.2f" % (tts_ending - tts_start))
                                 print("The file will be played!")
-                                client.publish(topic_base + "/log", "EVA is busy trying to speak the text: " + msg.payload.decode())
+                                client.publish(topic_base + "/syslog", "EVA is busy trying to speak the text: " + msg.payload.decode())
                                 client.publish(topic_base + "/speech", file_name)
                                 audio_file_is_ok = True
                                 first_requisition = False
@@ -133,8 +133,8 @@ def on_message(client, userdata, msg):
                     os.remove("eva-tts-module/tts_cache_files/" + file_name + config.WATSON_AUDIO_EXTENSION)
                 else:
                     print("The file is more than 0 bytes and will be played now!")
-                    client.publish(topic_base + "/log", "The audio was found in the cache.")
-                    client.publish(topic_base + "/log", "EVA is busy trying to speak the text: " + msg.payload.decode())
+                    client.publish(topic_base + "/syslog", "The audio was found in the cache.")
+                    client.publish(topic_base + "/syslog", "EVA is busy trying to speak the text: " + msg.payload.decode())
                     client.publish(topic_base + "/speech", file_name)
                     audio_file_is_ok = True  
         

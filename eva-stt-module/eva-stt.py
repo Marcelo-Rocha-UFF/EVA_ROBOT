@@ -54,17 +54,17 @@ def on_message(client, userdata, msg):
                 # language options defined in EvaML Schema ("pt-BR", "en-US", "es-ES")
                 response = r.recognize_google(audio, language = language_defined_by_user)
                 print("Google Speech Recognition guess you said: " + response)
-                client.publish(topic_base + "/log", "Google Speech Recognition guess you said: " + response)
+                client.publish(topic_base + "/syslog", "Google Speech Recognition guess you said: " + response)
                 client.publish(topic_base + "/var/dollar", response) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock
             except sr.UnknownValueError:
                 print("Google Speech Recognition could not understand your audio...")
-                client.publish(topic_base + "/log", "Google Speech Recognition could not understand your audio...")
+                client.publish(topic_base + "/syslog", "Google Speech Recognition could not understand your audio...")
                 client.publish(topic_base + "/leds", "ANGRY")
                 client.publish(topic_base + "/abort", "Google Speech Recognition could not understand your audio...")
 
             except sr.RequestError as e:
                 print("Unable to request the results from Google Speech Recognition: {0}".format(e))
-                client.publish(topic_base + "/log", "Unable to request the results from Google Speech Recognition: {0}".format(e))
+                client.publish(topic_base + "/syslog", "Unable to request the results from Google Speech Recognition: {0}".format(e))
                 client.publish(topic_base + "/leds", "ANGRY")
                 client.publish(topic_base + "/abort", "Unable to request the results from Google Speech Recognition: {0}".format(e))
             

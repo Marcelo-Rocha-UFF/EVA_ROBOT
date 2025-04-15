@@ -45,7 +45,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, msg):
     bulb_color = ""
     if msg.topic == topic_base + '/light':
-        client.publish(topic_base + '/log', 'Controlling the Smart Bulb (color|state): ' + msg.payload.decode())
+        client.publish(topic_base + '/syslog', 'Controlling the Smart Bulb (color|state): ' + msg.payload.decode())
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             try:
                 s.connect((SMARTBULB_IP, SMARTBULB_PORT))

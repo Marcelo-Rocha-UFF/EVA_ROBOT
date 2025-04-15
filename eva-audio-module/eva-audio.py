@@ -19,11 +19,11 @@ topic_base = config.EVA_TOPIC_BASE
 def playsound(file_path, audio_file, type, block = True):
         print(type)
         if type == "audio":
-            client.publish(topic_base + "/log", "Playing the sound: " + audio_file)
+            client.publish(topic_base + "/syslog", "Playing the sound: " + audio_file)
             audio_format = config.AUDIO_EXTENSION
         elif type == "speech":
             audio_format = config.WATSON_AUDIO_EXTENSION
-            client.publish(topic_base + "/log", "EVA spoke the text and is free now.")
+            client.publish(topic_base + "/syslog", "EVA spoke the text and is free now.")
         
         if block == True:
             print('Playing audio in BLOCKING mode.')

@@ -73,7 +73,7 @@ def on_message(client, userdata, msg):
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(640, 480)) # 
         print("Capturing a facial expression.")
-        client.publish(topic_base + '/log', "Computer Vision: " + "Eva will try to identify the user emotion.") 
+        client.publish(topic_base + '/syslog', "Computer Vision: " + "Eva will try to identify the user emotion.") 
         stop_FER = False
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
@@ -91,7 +91,7 @@ def on_message(client, userdata, msg):
                 emotion_label = emotion_dict[maxindex]
                 print(emotion_label)
                 cv2.putText(image, emotion_label, (x+20, y-60), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
-                client.publish(topic_base + '/log', "Inferred User Emotion: " + emotion_label)
+                client.publish(topic_base + '/syslog', "Inferred User Emotion: " + emotion_label)
                 client.publish(topic_base + "/var/dollar", emotion_label) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
                 # Clears the stream preparing to capture the next frame.
                 rawCapture.truncate(0)
@@ -120,7 +120,7 @@ def on_message(client, userdata, msg):
         camera.resolution = (400, 400)
         camera.framerate = 10
         rawCapture = PiRGBArray(camera, size=(400, 400)) # 
-        client.publish(topic_base + '/log', "Computer Vision: " + "Eva will try to IDENTIFY the user.") 
+        client.publish(topic_base + '/syslog', "Computer Vision: " + "Eva will try to IDENTIFY the user.") 
         print("Capturing a face.")
         for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=True):
             image = frame.array
@@ -146,7 +146,7 @@ def on_message(client, userdata, msg):
                 ########################################
                 if min_distance > 0.42: # An estimated value
                     id_usuario = "unknown"
-                client.publish(topic_base + '/log', "User ID: " + id_usuario)
+                client.publish(topic_base + '/syslog', "User ID: " + id_usuario)
                 client.publish(topic_base + "/var/dollar", id_usuario) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
                 break
             break
@@ -157,7 +157,7 @@ def on_message(client, userdata, msg):
 # QR Code Reader Submodule ########################################################
 ###################################################################################
     elif msg.topic == topic_base + '/qrRead':
-        client.publish(topic_base + '/log', "Computer Vision: " + "Eva will try to read a QR Code.") 
+        client.publish(topic_base + '/syslog', "Computer Vision: " + "Eva will try to read a QR Code.") 
         camera.resolution = (1920, 1080) # This resolution showed improvements in QR recognition
         camera.framerate = 10
         rawCapture = PiRGBArray(camera)
@@ -170,14 +170,14 @@ def on_message(client, userdata, msg):
                 decodedText, points, _ = qrCodeDetector.detectAndDecode(gray)  
                 if (decodedText != ""):
                     print("QR Code content: " + decodedText)
-                    client.publish(topic_base + '/log', "QR Code content: " + decodedText)
+                    client.publish(topic_base + '/syslog', "QR Code content: " + decodedText)
                     client.publish(topic_base + "/var/dollar", decodedText) # This publish will pass the value to the EvaSIM, so the EvaSIM will also unblock itself
                     # Clears the stream preparing to capture the next frame.
                     rawCapture.truncate(0)
                     break
                 else:
                     print("A empty string was read...")
-                    client.publish(topic_base + "/log", "A EMPTY string was read...")
+                    client.publish(topic_base + "/syslog", "A EMPTY string was read...")
                 
                 # Shows the video capture window.
                 if args.video:

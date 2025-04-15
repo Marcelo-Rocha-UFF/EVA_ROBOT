@@ -35,7 +35,7 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/motion/head':
-        client.publish(topic_base + '/log', 'Moving the head: ' + msg.payload.decode())
+        client.publish(topic_base + '/syslog', 'Moving the head: ' + msg.payload.decode())
         # Keeping compatibility with the old version.
         if msg.payload.decode() == "CENTER":
             EVA_arduino_serial_obj.write("c".encode())
@@ -134,7 +134,7 @@ def on_message(client, userdata, msg):
 
     # Movements of the robot's arms.
     if msg.topic == topic_base + '/motion/arm/left':
-        client.publish(topic_base + '/log', 'Moving the left arm: ' + msg.payload.decode())
+        client.publish(topic_base + '/syslog', 'Moving the left arm: ' + msg.payload.decode())
         if msg.payload.decode() == "UP":
             EVA_arduino_serial_obj.write("alu".encode())
         elif msg.payload.decode() == "DOWN":
@@ -153,7 +153,7 @@ def on_message(client, userdata, msg):
             EVA_arduino_serial_obj.write("alS".encode())
 
     if msg.topic == topic_base + '/motion/arm/right':
-        client.publish(topic_base + '/log', 'Moving the right arm: ' + msg.payload.decode())
+        client.publish(topic_base + '/syslog', 'Moving the right arm: ' + msg.payload.decode())
         if msg.payload.decode() == "UP":
             EVA_arduino_serial_obj.write("aru".encode())
         elif msg.payload.decode() == "DOWN":

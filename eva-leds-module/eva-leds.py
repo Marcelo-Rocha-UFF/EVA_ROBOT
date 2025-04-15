@@ -32,7 +32,7 @@ def on_message(client, userdata, msg):
     global p # process
     if msg.topic == topic_base + '/leds':
         if msg.payload.decode() != "STOP": # Only prints for commands other than STOP
-            client.publish(topic_base + '/log', "Leds Animation: " + msg.payload.decode()) 
+            client.publish(topic_base + '/syslog', "Leds Animation: " + msg.payload.decode()) 
         if msg.payload.decode() == "ANGRY": 
             p = subprocess.Popen("eva-leds-module/leds-animation/angry", stdout=subprocess.PIPE, shell=True, preexec_fn=os.setsid)
         elif msg.payload.decode() == "ANGRY2":

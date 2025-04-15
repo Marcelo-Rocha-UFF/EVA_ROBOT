@@ -333,7 +333,7 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     if msg.topic == topic_base + '/evaEmotion':
-        client.publish(topic_base + '/log', "EVA's facial expression: " + msg.payload.decode()) 
+        client.publish(topic_base + '/syslog', "EVA's facial expression: " + msg.payload.decode()) 
         if msg.payload.decode() == "NEUTRAL":
             lbl.targetstate = "neutral"
         elif msg.payload.decode() == "HAPPY":
